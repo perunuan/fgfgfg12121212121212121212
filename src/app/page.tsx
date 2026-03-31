@@ -1,0 +1,440 @@
+import Header from '@/components/layout/Header';
+import Link from 'next/link';
+import ContactForm from '@/components/forms/ContactForm';
+
+export default function Home() {
+  return (
+    <>
+      <Header />
+      <main>
+        {/* Hero Section */}
+        <section id="hero" className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/images/bg.jpg"
+              alt="Производство"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gray-900/70"></div>
+          </div>
+
+          <div className="container relative z-10 py-24 lg:py-32">
+            <div className="max-w-4xl">
+              <h1 className="mb-6 text-white leading-tight">
+                Модернизация и технологическая поддержка предприятий радиоэлектронной промышленности
+              </h1>
+              <p className="text-xl mb-10 text-gray-300 max-w-3xl leading-relaxed">
+                Полный цикл решений: от поставки оборудования до сервисного обслуживания и обучения персонала
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/category/equipment" className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block">
+                  Смотреть решения
+                </Link>
+                <Link href="/category/contacts" className="border-2 border-white text-white hover:bg-white/10 font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block">
+                  Связаться с нами
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Отраслевые решения */}
+        <section id="industries" className="py-20 lg:py-28 bg-gray-950">
+          <div className="px-4 lg:px-8">
+            <h2 className="text-3xl font-bold mb-12 text-white">
+              Отраслевые решения
+            </h2>
+
+            {/* Верхний ряд */}
+            <div className="flex gap-1 mb-1">
+              {[
+                { num: '01', title: 'Оборонно-промышленный комплекс', hash: '#defense' },
+                { num: '02', title: 'Производство электроники и ЭКБ', hash: '#electronics' },
+                { num: '03', title: 'Космическая промышленность', hash: '#space' },
+                { num: '04', title: 'Телекоммуникации и связь', hash: '#telecom' },
+                { num: '05', title: 'Радиоэлектронная промышленность', hash: '#radio' },
+              ].map((industry) => (
+                <Link
+                  key={industry.num}
+                  href={`/category/industries${industry.hash}`}
+                  className="group relative overflow-hidden cursor-pointer flex-1 min-w-[120px] hover:flex-[2] transition-all duration-500 ease-out border border-gray-900 hover:border-blue-500/50"
+                  style={{ minHeight: '320px' }}
+                >
+                  <img
+                    src="/images/bg.jpg"
+                    alt={industry.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-b from-gray-900/75 via-gray-900/55 to-gray-900/75 group-hover:from-gray-900/50 group-hover:via-gray-900/30 group-hover:to-gray-900/50 transition-all duration-500"></div>
+
+                  <div className="relative z-10 p-5 lg:p-6 h-full flex flex-col justify-between">
+                    <div className="pt-2">
+                      <h3 className="text-white font-medium text-sm lg:text-base leading-snug line-clamp-2">
+                        {industry.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="text-gray-500 text-xs font-mono">
+                        {industry.num}
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                        <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Нижний ряд */}
+            <div className="flex gap-1">
+              {[
+                { num: '06', title: 'Автомобилестроение', hash: '#auto' },
+                { num: '07', title: 'Авиастроение', hash: '#aviation' },
+                { num: '08', title: 'Энергетика', hash: '#energy' },
+                { num: '09', title: 'Наука и образование', hash: '#science' },
+                { num: '10', title: 'Транспортная инфраструктура', hash: '#transport' },
+              ].map((industry) => (
+                <Link
+                  key={industry.num}
+                  href={`/category/industries${industry.hash}`}
+                  className="group relative overflow-hidden cursor-pointer flex-1 min-w-[120px] hover:flex-[2] transition-all duration-500 ease-out border border-gray-900 hover:border-blue-500/50"
+                  style={{ minHeight: '320px' }}
+                >
+                  <img
+                    src="/images/bg.jpg"
+                    alt={industry.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-b from-gray-900/75 via-gray-900/55 to-gray-900/75 group-hover:from-gray-900/50 group-hover:via-gray-900/30 group-hover:to-gray-900/50 transition-all duration-500"></div>
+
+                  <div className="relative z-10 p-5 lg:p-6 h-full flex flex-col justify-between">
+                    <div className="pt-2">
+                      <h3 className="text-white font-medium text-sm lg:text-base leading-snug line-clamp-2">
+                        {industry.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="text-gray-500 text-xs font-mono">
+                        {industry.num}
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
+                        <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <Link href="/category/industries" className="border-2 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-blue-400 font-medium rounded-sm px-8 py-3 transition-all duration-300 inline-block">
+                Все отрасли →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Анимированный переход */}
+        <section className="relative h-64 lg:h-96 overflow-hidden bg-gradient-to-b from-gray-950 via-gray-900 to-white">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute left-1/4 top-1/2 transform -translate-y-1/2">
+              <div className="w-64 h-64 lg:w-96 lg:h-96 rounded-full bg-blue-600/10 animate-pulse"></div>
+            </div>
+            <div className="absolute right-1/4 top-1/3">
+              <div className="w-48 h-48 lg:w-72 lg:h-72 rounded-full bg-blue-500/10 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+            </div>
+            <div className="absolute left-1/2 top-2/3 transform -translate-x-1/2">
+              <div className="w-56 h-56 lg:w-80 lg:h-80 rounded-full bg-gray-400/10 animate-pulse" style={{ animationDelay: '1s' }}></div>
+            </div>
+          </div>
+
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                               linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+              backgroundSize: '50px 50px'
+            }}></div>
+          </div>
+
+          <div className="absolute inset-0">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-blue-400/30 rounded-full animate-bounce"
+                style={{
+                  left: `${15 + i * 15}%`,
+                  top: `${20 + (i % 3) * 25}%`,
+                  animationDelay: `${i * 0.3}s`,
+                  animationDuration: '3s'
+                }}
+              ></div>
+            ))}
+          </div>
+
+          <svg className="absolute bottom-0 left-0 right-0 w-full h-20 text-white" preserveAspectRatio="none" viewBox="0 0 1200 120">
+            <path
+              d="M0,60 C200,90 400,30 600,60 C800,90 1000,30 1200,60 L1200,120 L0,120 Z"
+              className="fill-white"
+            ></path>
+          </svg>
+        </section>
+
+        {/* Сделано в Диполе */}
+        <section id="products" className="py-20 lg:py-28 bg-white">
+          <div className="container">
+            <div className="flex justify-between items-center mb-12">
+              <h2 className="text-5xl lg:text-6xl font-light">
+                <span className="text-gray-900">Сделано</span>{' '}
+                <span className="text-gray-400">в Диполе</span>
+              </h2>
+              <Link href="/category/equipment" className="border border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900 font-medium rounded-sm px-6 py-3 text-sm transition-all duration-200 hidden md:inline-flex items-center gap-2">
+                Все решения
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { name: 'VIKING LAB', desc: 'лабораторная мебель и оборудование' },
+                { name: 'СРК-1000', desc: 'система рентгеновского контроля' },
+                { name: 'СМ16 ПРО', desc: 'Система струйной отмывки' },
+                { name: 'INSTRUMENTS', desc: 'контрольно-измерительные приборы' },
+              ].map((product) => (
+                <Link key={product.name} href="/category/equipment" className="bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all cursor-pointer group">
+                  <div className="h-64 bg-gray-200 overflow-hidden">
+                    <img
+                      src="/images/bg.jpg"
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-gray-700 transition-colors mb-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">{product.desc}</p>
+                    <span className="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-sm">
+                      Россия
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Ключевые направления */}
+        <section id="services" className="py-20 lg:py-28 bg-gray-50">
+          <div className="container">
+            <h2 className="text-3xl font-bold mb-12 text-gray-900">
+              Ключевые направления
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { num: '01', title: 'Техническое перевооружение', desc: 'Модернизация производственных линий', href: '/category/services' },
+                { num: '02', title: 'Сервисное обслуживание', desc: 'Ремонт и техническая поддержка', href: '/category/service' },
+                { num: '03', title: 'Инжиниринг', desc: 'Проектирование и интеграция', href: '/category/services' },
+                { num: '04', title: 'Аудит и консалтинг', desc: 'Анализ и оптимизация процессов', href: '/category/services' },
+              ].map((item) => (
+                <Link key={item.num} href={item.href} className="group border border-gray-200 hover:border-gray-400 transition-colors cursor-pointer bg-white">
+                  <div className="h-48 overflow-hidden relative">
+                    <img
+                      src="/images/bg.jpg"
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-150"
+                    />
+                    <div className="absolute inset-0 bg-gray-900/40 group-hover:bg-gray-900/30 transition-colors"></div>
+                    <div className="absolute bottom-4 left-4 text-4xl font-bold text-white">{item.num}</div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900">{item.title}</h3>
+                    <p className="text-gray-600">{item.desc}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section id="contacts" className="py-20 lg:py-28 bg-gray-900">
+          <div className="container">
+            <div className="max-w-3xl">
+              <h2 className="text-3xl font-bold mb-6 text-white">
+                Остались вопросы?
+              </h2>
+              <p className="text-xl mb-8 text-gray-400">
+                Свяжитесь с нами, и наши специалисты помогут подобрать оптимальное решение
+              </p>
+              <Link href="/category/contacts" className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-10 py-4 transition-all duration-200 inline-block">
+                Связаться с нами
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-gray-950 text-white py-16">
+          <div className="container">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+              {/* Логотип и контакты */}
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-blue-700 rounded-sm flex items-center justify-center text-white font-bold text-xl">
+                    Д
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">ДИПОЛЬ</div>
+                    <div className="text-xs text-gray-400">ТЕХНОЛОГИИ</div>
+                  </div>
+                </div>
+                <p className="text-gray-400 text-sm mb-6">
+                  Технологическая поддержка предприятий радиоэлектронной промышленности
+                </p>
+                <div className="space-y-3">
+                  <a href="tel:88005553535" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">
+                    8 (800) 555-35-35
+                  </a>
+                  <p className="text-sm text-gray-400">
+                    Пн-Пт: 9:00 - 18:00
+                  </p>
+                </div>
+              </div>
+
+              {/* Разделы */}
+              <div>
+                <h4 className="font-semibold mb-6 text-white text-lg">Разделы</h4>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/category/equipment" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Оборудование
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/industries" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Отраслевые решения
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/services" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Услуги
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/service" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Сервис
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/menu" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Весь каталог
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Компания */}
+              <div>
+                <h4 className="font-semibold mb-6 text-white text-lg">Компания</h4>
+                <ul className="space-y-3">
+                  <li>
+                    <Link href="/category/about" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      О компании
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/press" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Пресс-центр
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/events" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Мероприятия
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/category/careers" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Карьера
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#contacts" className="text-gray-400 hover:text-blue-400 transition-colors inline-flex items-center gap-2 group">
+                      <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      Контакты
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Форма связи */}
+              <div>
+                <h4 className="font-semibold mb-6 text-white text-lg">Быстрая связь</h4>
+                <p className="text-gray-400 text-sm mb-4">
+                  Оставьте заявку, и мы свяжемся с вами
+                </p>
+                <ContactForm />
+              </div>
+            </div>
+
+            {/* Нижняя часть футера */}
+            <div className="border-t border-gray-800 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="text-gray-500 text-sm text-center md:text-left">
+                  <p>&copy; 2024 ООО «Диполь Технологии». Все права защищены.</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-6 text-sm">
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">
+                    Политика конфиденциальности
+                  </Link>
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">
+                    Пользовательское соглашение
+                  </Link>
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">
+                    Карта сайта
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </>
+  );
+}

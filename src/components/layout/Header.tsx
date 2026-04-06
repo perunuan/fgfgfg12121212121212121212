@@ -16,30 +16,26 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      {/* Верхняя полоска */}
-      <div className="bg-gray-900 text-white text-sm">
-        <div className="container py-3">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              <a href="tel:88005553535" className="font-medium hover:text-gray-300 transition-colors flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
-                </svg>
-                8 (800) 555-35-35
-              </a>
-              <span className="hidden lg:inline text-gray-500">|</span>
-              <Link href="/category/contacts" className="hidden lg:block hover:text-gray-300 transition-colors">
-                Связаться с нами
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="font-medium text-white">RU</button>
-              <span className="text-gray-500">|</span>
-              <button className="hover:text-gray-300 transition-colors">EN</button>
-            </div>
+    {/* Верхняя полоска */}
+    <div className="bg-gray-900 text-white text-sm">
+      <div className="container py-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-8">
+            <a href="tel:88005553535" className="font-medium hover:text-gray-300 transition-colors flex items-center gap-2">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+              </svg>
+              8 (800) 555-35-35
+            </a>
+            <span className="hidden lg:inline text-gray-500">|</span>
+            <Link href="/category/contacts" className="hidden lg:block hover:text-gray-300 transition-colors">
+              Связаться с нами
+            </Link>
           </div>
+          {/* Переключатель языка убран */}
         </div>
       </div>
+    </div>
 
       {/* Основное меню */}
       <div className="container">

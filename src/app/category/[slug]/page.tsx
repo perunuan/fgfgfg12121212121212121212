@@ -1,11 +1,23 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Header from '@/components/layout/Header';
 
-// Продукты для каждой категории
+const hashToCategory: Record<string, string> = {
+  '#defense': 'Оборонно-промышленный комплекс',
+  '#electronics': 'Производство электроники и ЭКБ',
+  '#space': 'Космическая промышленность',
+  '#telecom': 'Телекоммуникации и связь',
+  '#radio': 'Радиоэлектронная промышленность',
+  '#auto': 'Автомобилестроение',
+  '#aviation': 'Авиастроение',
+  '#energy': 'Энергетика',
+  '#science': 'Наука и образование',
+  '#transport': 'Транспортная инфраструктура',
+};
+
 const productsData: Record<string, Array<{ name: string; slug: string; img: string; description: string; price?: string }>> = {
   'Производство электроники': [
     { name: 'Линия SMT-5000', slug: 'smt-5000', img: '/images/bg.jpg', description: 'Автоматическая линия поверхностного монтажа', price: 'от 15 000 000 ₽' },
@@ -236,153 +248,47 @@ const productsData: Record<string, Array<{ name: string; slug: string; img: stri
   ],
 };
 
-// Данные для всех категорий
-const categoryData: Record<string, {
-  title: string;
-  description: string;
-  sidebar: string[];
-}> = {
-  equipment: {
-    title: 'Оборудование',
-    description: 'Оснащение предприятий инновационным технологическим, измерительным и испытательным оборудованием.',
-    sidebar: [
-      'Производство электроники',
-      'Производство микроэлектроники',
-      'Измерения',
-      'Испытательное оборудование',
-      'Метрология и поверка',
-      '3D-принтеры',
-      'Ручная пайка и визуальный контроль',
-      'Программное обеспечение',
-      'Инженерная инфраструктура',
-      'Оснащение производственных помещений',
-    ]
-  },
-  industries: {
-    title: 'Отраслевые решения',
-    description: 'Комплексные решения для различных отраслей промышленности.',
-    sidebar: [
-      'Оборонно-промышленный комплекс',
-      'Производство электроники и ЭКБ',
-      'Космическая промышленность',
-      'Телекоммуникации и связь',
-      'Радиоэлектронная промышленность',
-      'Автомобилестроение',
-      'Авиастроение',
-      'Энергетика',
-      'Наука и образование',
-      'Транспортная инфраструктура',
-    ]
-  },
-  services: {
-    title: 'Услуги',
-    description: 'Полный спектр услуг по модернизации и поддержке предприятий.',
-    sidebar: [
-      'Техническое перевооружение',
-      'Инжиниринг',
-      'Аудит и консалтинг',
-      'Поставка оборудования',
-      'Монтаж и пусконаладка',
-      'Обучение персонала',
-    ]
-  },
-  service: {
-    title: 'Сервис',
-    description: 'Гарантийное и постгарантийное обслуживание.',
-    sidebar: [
-      'Гарантийное обслуживание',
-      'Постгарантийное обслуживание',
-      'Ремонт оборудования',
-      'Техническая поддержка',
-      'Запасные части',
-    ]
-  },
-  press: {
-    title: 'Пресс-центр',
-    description: 'Новости компании и публикации.',
-    sidebar: [
-      'Новости компании',
-      'Публикации в СМИ',
-      'Пресс-релизы',
-      'Видео',
-    ]
-  },
-  events: {
-    title: 'Мероприятия',
-    description: 'Выставки, конференции и семинары.',
-    sidebar: [
-      'Выставки',
-      'Конференции',
-      'Семинары',
-      'Вебинары',
-    ]
-  },
-  about: {
-    title: 'О компании',
-    description: 'Информация о компании.',
-    sidebar: [
-      'История компании',
-      'Руководство',
-      'Партнёры',
-      'Сертификаты',
-      'Реквизиты',
-    ]
-  },
-  careers: {
-    title: 'Работа в Диполе',
-    description: 'Вакансии и возможности.',
-    sidebar: [
-      'Вакансии',
-      'Стажировки',
-      'Корпоративная культура',
-      'Отзывы сотрудников',
-    ]
-  },
-  contacts: {
-    title: 'Контакты',
-    description: 'Наши контакты.',
-    sidebar: [
-      'Офисы и представительства',
-      'Отдел продаж',
-      'Сервисный центр',
-      'Написать нам',
-    ]
-  },
-};
-
-// Маппинг hash → индекс категории в sidebar
-const hashToCategory: Record<string, number> = {
-  '#defense': 0,
-  '#electronics': 1,
-  '#space': 2,
-  '#telecom': 3,
-  '#radio': 4,
-  '#auto': 5,
-  '#aviation': 6,
-  '#energy': 7,
-  '#science': 8,
-  '#transport': 9,
+const categoryData: Record<string, { title: string; sidebar: string[] }> = {
+  equipment: { title: 'Оборудование', sidebar: ['Производство электроники', 'Производство микроэлектроники', 'Измерения', 'Испытательное оборудование', 'Метрология и поверка', '3D-принтеры', 'Ручная пайка и визуальный контроль', 'Программное обеспечение', 'Инженерная инфраструктура', 'Оснащение производственных помещений'] },
+  industries: { title: 'Отраслевые решения', sidebar: ['Оборонно-промышленный комплекс', 'Производство электроники и ЭКБ', 'Космическая промышленность', 'Телекоммуникации и связь', 'Радиоэлектронная промышленность', 'Автомобилестроение', 'Авиастроение', 'Энергетика', 'Наука и образование', 'Транспортная инфраструктура'] },
+  services: { title: 'Услуги', sidebar: ['Техническое перевооружение', 'Инжиниринг', 'Аудит и консалтинг', 'Поставка оборудования', 'Монтаж и пусконаладка', 'Обучение персонала'] },
+  service: { title: 'Сервис', sidebar: ['Гарантийное обслуживание', 'Постгарантийное обслуживание', 'Ремонт оборудования', 'Техническая поддержка', 'Запасные части'] },
+  press: { title: 'Пресс-центр', sidebar: ['Новости компании', 'Публикации в СМИ', 'Пресс-релизы', 'Видео'] },
+  events: { title: 'Мероприятия', sidebar: ['Выставки', 'Конференции', 'Семинары', 'Вебинары'] },
+  about: { title: 'О компании', sidebar: ['История компании', 'Руководство', 'Партнёры', 'Сертификаты', 'Реквизиты'] },
+  careers: { title: 'Работа в Диполе', sidebar: ['Вакансии', 'Стажировки', 'Корпоративная культура', 'Отзывы сотрудников'] },
+  contacts: { title: 'Контакты', sidebar: ['Офисы и представительства', 'Отдел продаж', 'Сервисный центр', 'Написать нам'] },
 };
 
 export default function CategoryPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug as string;
   const data = categoryData[slug] || categoryData.equipment;
 
   const [activeCategory, setActiveCategory] = useState<string>(data.sidebar[0]);
 
-  // Обработка hash при загрузке страницы
+  // Обработка hash И sub параметров
   useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hashToCategory[hash] !== undefined && slug === 'industries') {
-      const index = hashToCategory[hash];
-      if (data.sidebar[index]) {
-        setActiveCategory(data.sidebar[index]);
+    // Сначала проверяем hash (для отраслей с главной страницы)
+    if (slug === 'industries' && typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash && hashToCategory[hash]) {
+        setActiveCategory(hashToCategory[hash]);
+        return;
       }
     }
-  }, [data.sidebar, slug]);
 
-  // Получаем товары для активной категории
+    // Затем проверяем параметр sub из URL
+    const subCategory = searchParams.get('sub');
+    if (subCategory && data.sidebar.includes(subCategory)) {
+      setActiveCategory(subCategory);
+    } else {
+      // Если ничего нет, устанавливаем первую категорию
+      setActiveCategory(data.sidebar[0]);
+    }
+  }, [slug, searchParams.get('sub'), data.sidebar.join(',')]);
+
   const products = productsData[activeCategory] || [];
 
   return (
@@ -393,42 +299,40 @@ export default function CategoryPage() {
         <div className="bg-gray-50 border-b border-gray-200">
           <div className="container py-4">
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Link href="/" className="hover:text-blue-700 transition-colors">
-                Главная
+              <Link href="/menu" className="hover:text-blue-700 transition-colors font-medium">
+                Меню
               </Link>
               <span>/</span>
               <Link href={`/category/${slug}`} className="hover:text-blue-700 transition-colors">
                 {data.title}
               </Link>
               <span>/</span>
-              <span className="text-gray-900 font-medium">{activeCategory}</span>
+              <Link
+                href={`/category/${slug}?sub=${encodeURIComponent(activeCategory)}`}
+                className="text-gray-900 font-medium hover:text-blue-700 transition-colors"
+              >
+                {activeCategory}
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Заголовок и описание */}
         <section className="py-12">
           <div className="container">
             <div className="flex flex-col lg:flex-row gap-12">
               {/* Левое меню */}
               <aside className="lg:w-72 flex-shrink-0">
                 <div className="sticky top-24">
-                  <div className="mb-6">
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Меню</span>
-                  </div>
+                  <div className="mb-6"><span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Меню</span></div>
                   <nav className="space-y-1">
                     {data.sidebar.map((category) => (
-                      <button
+                      <Link
                         key={category}
-                        onClick={() => setActiveCategory(category)}
-                        className={`w-full text-left py-3 px-4 text-sm transition-colors rounded-sm ${
-                          activeCategory === category
-                            ? 'bg-blue-50 text-blue-700 font-medium'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
+                        href={`/category/${slug}?sub=${encodeURIComponent(category)}`}
+                        className={`w-full py-3 px-4 text-sm transition-colors rounded-sm block ${activeCategory === category ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
                       >
                         {category}
-                      </button>
+                      </Link>
                     ))}
                   </nav>
                 </div>
@@ -436,66 +340,34 @@ export default function CategoryPage() {
 
               {/* Основной контент */}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-gray-900 mb-6">
-                  {activeCategory}
-                </h1>
-
+                <h1 className="text-4xl font-bold text-gray-900 mb-6">{activeCategory}</h1>
                 <p className="text-gray-600 text-lg leading-relaxed max-w-3xl mb-12">
-                  {products.length > 0
-                    ? `Каталог: ${activeCategory}. Выберите подходящее оборудование.`
-                    : `Информация о категории: ${activeCategory}`
-                  }
+                  {products.length > 0 ? `Каталог: ${activeCategory}. Выберите подходящее оборудование.` : `Информация о категории: ${activeCategory}`}
                 </p>
 
-                {/* Карточки товаров */}
                 {products.length > 0 ? (
-                  <>
-                    <div className="grid md:grid-cols-2 gap-8">
-                      {products.map((product, index) => (
-                        <Link
-                          key={index}
-                          href={`/product/${product.slug}`}
-                          className="group block"
-                        >
-                          <div className="border border-gray-200 rounded-sm overflow-hidden hover:shadow-xl transition-all duration-300">
-                            <div className="h-64 bg-gray-100 overflow-hidden">
-                              <img
-                                src={product.img}
-                                alt={product.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                            </div>
-                            <div className="p-6">
-                              <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors">
-                                {product.name}
-                              </h3>
-                              <p className="text-gray-600 mb-3">
-                                {product.description}
-                              </p>
-                              {product.price && (
-                                <div className="text-blue-700 font-bold text-lg">
-                                  {product.price}
-                                </div>
-                              )}
-                            </div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    {products.map((product, index) => (
+                      <Link
+                        key={index}
+                        href={`/product/${product.slug}?from=${slug}&sub=${encodeURIComponent(activeCategory)}`}
+                        className="group block"
+                      >
+                        <div className="border border-gray-200 rounded-sm overflow-hidden hover:shadow-xl transition-all duration-300">
+                          <div className="h-64 bg-gray-100 overflow-hidden">
+                            <img src={product.img} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Кнопка "Показать все" */}
-                    <div className="mt-12 text-center">
-                      <button className="border-2 border-gray-300 hover:border-blue-700 hover:bg-blue-700 text-gray-700 hover:text-white font-medium rounded-sm px-10 py-4 transition-all">
-                        Показать все товары →
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-20">
-                    <p className="text-gray-500 text-lg">
-                      Информация о данной категории готовится
-                    </p>
+                          <div className="p-6">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors">{product.name}</h3>
+                            <p className="text-gray-600 mb-3">{product.description}</p>
+                            {product.price && <div className="text-blue-700 font-bold text-lg">{product.price}</div>}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
+                ) : (
+                  <div className="text-center py-20"><p className="text-gray-500 text-lg">Информация готовится</p></div>
                 )}
               </div>
             </div>

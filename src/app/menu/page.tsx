@@ -234,7 +234,7 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {/* Footer */}
+        {/* Fooyyyyyyyyyyter */}
         <footer className="bg-black text-white py-16">
           <div className="container">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">

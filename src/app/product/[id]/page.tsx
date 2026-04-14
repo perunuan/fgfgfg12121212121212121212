@@ -1,295 +1,222 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 
-// Категории, которые НЕ должны показывать характеристики и преимущества
-const simpleContentCategories = [
-  'Офисы и представительства',
-  'Отдел продаж',
-  'Сервисный центр',
-  'Написать нам',
-  'Руководство',
-  'Вакансии',
-  'Стажировки',
-  'Отзывы сотрудников',
-  'Корпоративная культура',
-  'Новости компании',
-  'Публикации в СМИ',
-  'Пресс-релизы',
-  'Видео',
-  'Выставки',
-  'Конференции',
-  'Семинары',
-  'Вебинары',
-  'История компании',
-  'Партнёры',
-  'Сертификаты',
-  'Реквизиты',
-];
-
-// Маппинг категорий для хлебных крошек
-const categorySlugMap: Record<string, string> = {
-  'Производство электроники': 'equipment',
-  'Производство микроэлектроники': 'equipment',
-  'Измерения': 'equipment',
-  'Испытательное оборудование': 'equipment',
-  'Метрология и поверка': 'equipment',
-  '3D-принтеры': 'equipment',
-  'Ручная пайка и визуальный контроль': 'equipment',
-  'Программное обеспечение': 'equipment',
-  'Инженерная инфраструктура': 'equipment',
-  'Оснащение производственных помещений': 'equipment',
-  'Оборонно-промышленный комплекс': 'industries',
-  'Производство электроники и ЭКБ': 'industries',
-  'Космическая промышленность': 'industries',
-  'Телекоммуникации и связь': 'industries',
-  'Радиоэлектронная промышленность': 'industries',
-  'Автомобилестроение': 'industries',
-  'Авиастроение': 'industries',
-  'Энергетика': 'industries',
-  'Наука и образование': 'industries',
-  'Транспортная инфраструктура': 'industries',
-  'Техническое перевооружение': 'services',
-  'Инжиниринг': 'services',
-  'Аудит и консалтинг': 'services',
-  'Поставка оборудования': 'services',
-  'Монтаж и пусконаладка': 'services',
-  'Обучение персонала': 'services',
-  'Гарантийное обслуживание': 'service',
-  'Постгарантийное обслуживание': 'service',
-  'Ремонт оборудования': 'service',
-  'Техническая поддержка': 'service',
-  'Запасные части': 'service',
-  'Новости компании': 'press',
-  'Публикации в СМИ': 'press',
-  'Пресс-релизы': 'press',
-  'Видео': 'press',
-  'Выставки': 'events',
-  'Конференции': 'events',
-  'Семинары': 'events',
-  'Вебинары': 'events',
-  'История компании': 'about',
-  'Руководство': 'about',
-  'Партнёры': 'about',
-  'Сертификаты': 'about',
-  'Реквизиты': 'about',
-  'Вакансии': 'careers',
-  'Стажировки': 'careers',
-  'Корпоративная культура': 'careers',
-  'Отзывы сотрудников': 'careers',
-  'Офисы и представительства': 'contacts',
-  'Отдел продаж': 'contacts',
-  'Сервисный центр': 'contacts',
-  'Написать нам': 'contacts',
-};
-
-function getCategorySlug(category: string): string {
-  return categorySlugMap[category] || 'equipment';
-}
-
 // === БАЗА ДАННЫХ ВСЕХ ТОВАРОВ ===
-const productsData: Record<string, {
+const productsDatabase: Record<string, {
   name: string;
-  img: string;
-  price: string;
+  slug: string;
   category: string;
+  categorySlug: string;
   description: string;
-  characteristics?: Record<string, string>;
-  features?: string[];
-  email?: string;
-  phone?: string;
-  address?: string;
-  position?: string;
-  experience?: string;
-  date?: string;
-  location?: string;
+  price?: string;
+  salary?: string;
 }> = {
-  // === ПРОИЗВОДСТВО ЭЛЕКТРОНИКИ ===
-  'smt-5000': { name: 'Линия SMT-5000', img: '/images/bg.jpg', price: 'от 15 000 000 ₽', category: 'Производство электроники', description: 'Автоматическая линия поверхностного монтажа полной комплектации.', characteristics: { 'Производительность': 'до 25 000 компонентов/час', 'Точность установки': '±0.03 мм', 'Количество питателей': 'до 120 штук' }, features: ['Автоматическая смена насадок', 'Система технического зрения', 'Интеграция с MES'] },
-  'st-2000': { name: 'Трафаретный принтер ST-2000', img: '/images/bg.jpg', price: 'от 1 200 000 ₽', category: 'Производство электроники', description: 'Полуавтоматический трафаретный принтер для нанесения паяльной пасты.', characteristics: { 'Точность печати': '±0.025 мм', 'Размер трафарета': 'до 737 × 737 мм', 'Тип привода': 'пневматический' }, features: ['Регулируемое давление', 'Система очистки трафарета', 'Удобная замена'] },
-  'jet-500': { name: 'Дозатор Jet-500', img: '/images/bg.jpg', price: 'от 1 800 000 ₽', category: 'Производство электроники', description: 'Струйный дозатор для точного нанесения клея и паяльной пасты.', characteristics: { 'Тип дозирования': 'струйное', 'Мин. объем капли': '0.5 нл', 'Частота': 'до 500 точек/сек' }, features: ['Бесконтактное дозирование', 'Автоматическая калибровка', 'Программируемые паттерны'] },
-  'pick-place-3000': { name: 'Установщик компонентов', img: '/images/bg.jpg', price: 'от 8 000 000 ₽', category: 'Производство электроники', description: 'Высокоскоростной автоматический установщик компонентов.', characteristics: { 'Скорость установки': 'до 15 000 комп/час', 'Точность': '±0.04 мм', 'Количество питателей': 'до 80' }, features: ['Высокая скорость', 'Точная установка', 'Широкий диапазон'] },
+  // === КОЛЛАБОРАТИВНАЯ РОБОТОТЕХНИКА ===
+  'ur3e': { name: 'UR3e', slug: 'ur3e', category: 'Коботы Universal Robots', categorySlug: 'collaborative-robots', description: 'Компактный кобот для малых задач, радиус 500 мм, грузоподъёмность 3 кг' },
+  'ur5e': { name: 'UR5e', slug: 'ur5e', category: 'Коботы Universal Robots', categorySlug: 'collaborative-robots', description: 'Универсальный кобот для сборки и упаковки, радиус 850 мм, грузоподъёмность 5 кг' },
+  'ur10e': { name: 'UR10e', slug: 'ur10e', category: 'Коботы Universal Robots', categorySlug: 'collaborative-robots', description: 'Мощный кобот для паллетирования, радиус 1300 мм, грузоподъёмность 12.5 кг' },
+  'ur16e': { name: 'UR16e', slug: 'ur16e', category: 'Коботы Universal Robots', categorySlug: 'collaborative-robots', description: 'Тяжёлый кобот для автопрома, радиус 900 мм, грузоподъёмность 16 кг' },
+  'ur20': { name: 'UR20', slug: 'ur20', category: 'Коботы Universal Robots', categorySlug: 'collaborative-robots', description: 'Новейшая модель для крупных задач, радиус 1750 мм, грузоподъёмность 20 кг' },
+  'sick-scanners': { name: 'Лазерные сканеры SICK', slug: 'sick-scanners', category: 'Системы безопасности', categorySlug: 'collaborative-robots', description: 'Защитные зоны для коботов, сертификация SIL2/PLd' },
+  'signal-towers': { name: 'Светофоры и маяки', slug: 'signal-towers', category: 'Системы безопасности', categorySlug: 'collaborative-robots', description: 'Визуальная индикация статуса робота и линии' },
+  'protective-covers': { name: 'Защитные кожухи', slug: 'protective-covers', category: 'Системы безопасности', categorySlug: 'collaborative-robots', description: 'IP54 защита для работы в агрессивных средах' },
+  'emergency-stops': { name: 'Аварийные кнопки', slug: 'emergency-stops', category: 'Системы безопасности', categorySlug: 'collaborative-robots', description: 'Категория 0 и 1 по стандарту ISO 13850' },
+  'polyscope-basic': { name: 'Курс PolyScope Basic', slug: 'polyscope-basic', category: 'Программирование и обучение', categorySlug: 'collaborative-robots', description: '5 дней, программирование с пульта, базовые скрипты' },
+  'polyscope-advanced': { name: 'Курс PolyScope Advanced', slug: 'polyscope-advanced', category: 'Программирование и обучение', categorySlug: 'collaborative-robots', description: 'Scripting, Modbus, Ethernet/IP, интеграция с внешними системами' },
+  'ursim-simulator': { name: 'Симулятор URSim', slug: 'ursim-simulator', category: 'Программирование и обучение', categorySlug: 'collaborative-robots', description: 'Оффлайн программирование и отладка на ПК' },
+  'plc-integration': { name: 'Интеграция с PLC', slug: 'plc-integration', category: 'Программирование и обучение', categorySlug: 'collaborative-robots', description: 'Profinet, EtherNet/IP, Modbus TCP — настройка обмена данными' },
+  'cell-design': { name: 'Проектирование ячеек', slug: 'cell-design', category: 'Интеграция в линии', categorySlug: 'collaborative-robots', description: '3D-моделирование, расчёт цикла, эргономика' },
+  'commissioning': { name: 'Монтаж и пусконаладка', slug: 'commissioning', category: 'Интеграция в линии', categorySlug: 'collaborative-robots', description: 'Установка, калибровка, тестовый запуск' },
+  'documentation': { name: 'Техническая документация', slug: 'documentation', category: 'Интеграция в линии', categorySlug: 'collaborative-robots', description: 'Паспорта, инструкции, схемы подключения' },
+  'integration-support': { name: 'Поддержка 24/7', slug: 'integration-support', category: 'Интеграция в линии', categorySlug: 'collaborative-robots', description: 'Удалённая помощь и выезд инженера при необходимости' },
+  'schunk-grippers': { name: 'Пневмозахваты Schunk', slug: 'schunk-grippers', category: 'Эффекторы и захваты', categorySlug: 'collaborative-robots', description: 'Параллельные и угловые захваты для различных задач' },
+  'vacuum-generators': { name: 'Вакуумные генераторы', slug: 'vacuum-generators', category: 'Эффекторы и захваты', categorySlug: 'collaborative-robots', description: 'Для хрупких и пористых поверхностей, с контролем утечек' },
+  'servo-grippers': { name: 'Сервозахваты', slug: 'servo-grippers', category: 'Эффекторы и захваты', categorySlug: 'collaborative-robots', description: 'Точное управление усилием и положением' },
+  'gripper-tips': { name: 'Сменные насадки', slug: 'gripper-tips', category: 'Эффекторы и захваты', categorySlug: 'collaborative-robots', description: 'Быстрая смена под разные типы деталей' },
 
-  // === ИЗМЕРЕНИЯ ===
-  'ds-2000': { name: 'Осциллограф DS-2000', img: '/images/bg.jpg', price: 'от 350 000 ₽', category: 'Измерения', description: 'Цифровой осциллограф с полосой пропускания 200 МГц.', characteristics: { 'Полоса пропускания': '200 МГц', 'Количество каналов': '4', 'Частота дискретизации': '1 Гвыб/с' }, features: ['Сенсорный экран', 'Автоматические измерения', 'Декодирование протоколов'] },
-  'multimeter-digital': { name: 'Мультиметр Digital Pro', img: '/images/bg.jpg', price: 'от 120 000 ₽', category: 'Измерения', description: 'Прецизионный мультиметр с высоким разрешением.', characteristics: { 'Разрядность': '6.5', 'Постоянное напряжение': 'до 1000 В', 'Интерфейс': 'USB, RS-232' }, features: ['Высокая точность', 'Автоматический выбор пределов', 'Интерфейс ПК'] },
-  'spectrum-analyzer': { name: 'Анализатор спектра', img: '/images/bg.jpg', price: 'от 850 000 ₽', category: 'Измерения', description: 'Анализатор спектра до 6 ГГц для радиочастотных измерений.', characteristics: { 'Частотный диапазон': '9 кГц - 6 ГГц', 'Полоса разрешения': '10 Гц - 3 МГц', 'ДД': '-145 дБм/Гц' }, features: ['Широкий диапазон', 'Высокая чувствительность', 'Удобный интерфейс'] },
-  'signal-generator': { name: 'Генератор сигналов', img: '/images/bg.jpg', price: 'от 280 000 ₽', category: 'Измерения', description: 'Генератор сигналов произвольной формы.', characteristics: { 'Частотный диапазон': '1 мкГц - 100 МГц', 'Разрешение': '14 бит', 'Каналы': '2' }, features: ['Произвольная форма', 'Высокое разрешение', 'Два канала'] },
+  // === МОБИЛЬНАЯ РОБОТОТЕХНИКА ===
+  'mir250': { name: 'MiR250', slug: 'mir250', category: 'AGV и AMR платформы', categorySlug: 'mobile-robots', description: 'Автономный мобильный робот, грузоподъёмность 250 кг, навигация LiDAR+SLAM' },
+  'otto1500': { name: 'OTTO 1500', slug: 'otto1500', category: 'AGV и AMR платформы', categorySlug: 'mobile-robots', description: 'Тяжёлая платформа для паллет, до 1500 кг, магнитная навигация' },
+  'seegrid-vslam': { name: 'Seegrid VSLAM', slug: 'seegrid-vslam', category: 'AGV и AMR платформы', categorySlug: 'mobile-robots', description: 'Визуальная навигация без маркеров, обучение маршрута' },
+  'kuka-kmr': { name: 'KUKA KMR', slug: 'kuka-kmr', category: 'AGV и AMR платформы', categorySlug: 'mobile-robots', description: 'Модульная платформа для интеграции с манипуляторами' },
+  'dji-matrice': { name: 'DJI Matrice 350 RTK', slug: 'dji-matrice', category: 'Инспекционные дроны', categorySlug: 'mobile-robots', description: 'Промышленный дрон с тепловизором и зум-камерой, защита IP55' },
+  'autel-evo': { name: 'Autel EVO II Enterprise', slug: 'autel-evo', category: 'Инспекционные дроны', categorySlug: 'mobile-robots', description: 'Компактный дрон для быстрой инспекции, время полёта 40 мин' },
+  'drone-docks': { name: 'Станции автозарядки', slug: 'drone-docks', category: 'Инспекционные дроны', categorySlug: 'mobile-robots', description: 'Полностью автономные полёты по расписанию' },
+  'drone-software': { name: 'ПО для анализа данных', slug: 'drone-software', category: 'Инспекционные дроны', categorySlug: 'mobile-robots', description: 'Автоматическое выявление дефектов на снимках' },
+  'sorting-robots': { name: 'Сортировочные системы', slug: 'sorting-robots', category: 'Логистические роботы', categorySlug: 'mobile-robots', description: 'Для складов и e-commerce, производительность до 20 000 посылок/час' },
+  'palletizers': { name: 'Паллетайзеры', slug: 'palletizers', category: 'Логистические роботы', categorySlug: 'mobile-robots', description: 'Автоматическая укладка коробок на паллеты по заданной схеме' },
+  'picking-amr': { name: 'AMR для picking', slug: 'picking-amr', category: 'Логистические роботы', categorySlug: 'mobile-robots', description: 'Роботы-помощники для комплектации заказов' },
+  'wms-integration': { name: 'Интеграция с WMS', slug: 'wms-integration', category: 'Логистические роботы', categorySlug: 'mobile-robots', description: 'Синхронизация с системами управления складом' },
+  'hesai-lidar': { name: 'LiDAR Hesai Pandar', slug: 'hesai-lidar', category: 'Навигация и LiDAR', categorySlug: 'mobile-robots', description: 'Высокоточное 3D-картирование, дальность до 200 м' },
+  'slam-modules': { name: 'SLAM модули', slug: 'slam-modules', category: 'Навигация и LiDAR', categorySlug: 'mobile-robots', description: 'Навигация без внешних маркеров, построение карты в реальном времени' },
+  'visual-odometry': { name: 'Визуальные одометры', slug: 'visual-odometry', category: 'Навигация и LiDAR', categorySlug: 'mobile-robots', description: 'Точное позиционирование по камерам' },
+  'rtk-receivers': { name: 'RTK-приёмники', slug: 'rtk-receivers', category: 'Навигация и LiDAR', categorySlug: 'mobile-robots', description: 'Сантиметровая точность для открытых площадок' },
+  'contact-chargers': { name: 'Контактные станции', slug: 'contact-chargers', category: 'Зарядные станции', categorySlug: 'mobile-robots', description: 'Быстрая зарядка AGV за 15-30 минут' },
+  'wireless-charging': { name: 'Беспроводные системы', slug: 'wireless-charging', category: 'Зарядные станции', categorySlug: 'mobile-robots', description: 'Индукционная зарядка без контакта, защита IP67' },
+  'energy-management': { name: 'Умное управление энергией', slug: 'energy-management', category: 'Зарядные станции', categorySlug: 'mobile-robots', description: 'Оптимизация графика зарядки для снижения пиковых нагрузок' },
 
-  // === 3D-ПРИНТЕРЫ ===
-  'industrial-x1': { name: '3D-принтер Industrial X1', img: '/images/bg.jpg', price: 'от 1 500 000 ₽', category: '3D-принтеры', description: 'Промышленный FDM 3D-принтер для печати крупногабаритных деталей.', characteristics: { 'Технология': 'FDM', 'Область печати': '400 × 400 × 400 мм', 'Точность': '±0.1 мм' }, features: ['Большая область печати', 'Промышленное качество', 'Закрытая камера'] },
-  'pro-300': { name: '3D-принтер Pro 300', img: '/images/bg.jpg', price: 'от 850 000 ₽', category: '3D-принтеры', description: 'SLA фотополимерный 3D-принтер высокой точности.', characteristics: { 'Технология': 'SLA', 'Область печати': '192 × 120 × 200 мм', 'Точность XY': '0.047 мм' }, features: ['Высокая точность', 'Гладкая поверхность', 'Идеально для прототипов'] },
-  'desktop-mini': { name: '3D-принтер Desktop Mini', img: '/images/bg.jpg', price: 'от 250 000 ₽', category: '3D-принтеры', description: 'Компактный настольный 3D-принтер для офиса.', characteristics: { 'Технология': 'FDM', 'Область печати': '150 × 150 × 150 мм', 'Вес': '8 кг' }, features: ['Компактный', 'Прост в использовании', 'Недорогой'] },
-  'metal-pro': { name: '3D-принтер Metal Pro', img: '/images/bg.jpg', price: 'от 5 000 000 ₽', category: '3D-принтеры', description: 'Промышленный 3D-принтер для печати металлом.', characteristics: { 'Технология': 'DMLS', 'Область печати': '250 × 250 × 300 мм', 'Мощность лазера': '400 Вт' }, features: ['Печать металлом', 'Промышленное качество', 'Высокая прочность'] },
+  // === МЕХАТРОНИКА ===
+  'siemens-servo': { name: 'Siemens 1FK7', slug: 'siemens-servo', category: 'Сервоприводы и моторы', categorySlug: 'mechatronics', description: 'Высокая динамика и точность, интеграция с Sinamics' },
+  'stepper-motors': { name: 'Шаговые двигатели', slug: 'stepper-motors', category: 'Сервоприводы и моторы', categorySlug: 'mechatronics', description: 'Для ЧПУ и 3D-принтеров, микрошаговый режим' },
+  'linear-motors': { name: 'Линейные моторы', slug: 'linear-motors', category: 'Сервоприводы и моторы', categorySlug: 'mechatronics', description: 'Прямой привод без редуктора, высокая скорость' },
+  'beckhoff-cx': { name: 'Beckhoff CX', slug: 'beckhoff-cx', category: 'Контроллеры движения', categorySlug: 'mechatronics', description: 'PC-based управление, EtherCAT, TwinCAT 3' },
+  'br-acopos': { name: 'B&R ACOPOS', slug: 'br-acopos', category: 'Контроллеры движения', categorySlug: 'mechatronics', description: 'Мультиосевое позиционирование, синхронизация до 32 осей' },
+  'omron-nj': { name: 'Omron NJ', slug: 'omron-nj', category: 'Контроллеры движения', categorySlug: 'mechatronics', description: 'Интегрированный ПЛК и контроллер движения' },
+  'optical-encoders': { name: 'Оптические энкодеры', slug: 'optical-encoders', category: 'Датчики и энкодеры', categorySlug: 'mechatronics', description: 'Разрешение до 24 бит, интерфейс SSI/BISS' },
+  'ft-sensors': { name: 'Силомоментные датчики', slug: 'ft-sensors', category: 'Датчики и энкодеры', categorySlug: 'mechatronics', description: 'Для коботов и сборки, измерение 6 компонентов' },
+  'laser-distance': { name: 'Лазерные дальномеры', slug: 'laser-distance', category: 'Датчики и энкодеры', categorySlug: 'mechatronics', description: 'Точность до 0.1 мм, дальность до 100 м' },
+  'festo-cylinders': { name: 'Festo цилиндры', slug: 'festo-cylinders', category: 'Пневмо- и гидроцилиндры', categorySlug: 'mechatronics', description: 'Стандартные и компактные серии, материалы нержавейка' },
+  'hydraulic-stations': { name: 'Гидростанции', slug: 'hydraulic-stations', category: 'Пневмо- и гидроцилиндры', categorySlug: 'mechatronics', description: 'Высокое давление до 350 бар, встроенная фильтрация' },
+  'proportional-valves': { name: 'Пропорциональные клапаны', slug: 'proportional-valves', category: 'Пневмо- и гидроцилиндры', categorySlug: 'mechatronics', description: 'Плавное регулирование потока и давления' },
+  'linear-modules': { name: 'Линейные модули', slug: 'linear-modules', category: 'Сборочные модули', categorySlug: 'mechatronics', description: 'Точное перемещение осей, нагрузка до 500 кг' },
+  'rotary-tables': { name: 'Поворотные столы', slug: 'rotary-tables', category: 'Сборочные модули', categorySlug: 'mechatronics', description: 'Для фрезеровки и сварки, позиционирование ±5 угловых секунд' },
+  'vibration-bowls': { name: 'Вибрационные чаши', slug: 'vibration-bowls', category: 'Сборочные модули', categorySlug: 'mechatronics', description: 'Автоматическая ориентация мелких деталей' },
 
-  // === МЕНЕДЖЕРЫ И КОНТАКТЫ (БЕЗ характеристик) ===
-  'manager-1': { name: 'Менеджер 1', img: '/images/bg.jpg', price: '', category: 'Отдел продаж', description: 'Специалист по продажам оборудования', phone: '+7 (495) 123-45-67', email: 'sales@dipaul.ru' },
-  'manager-2': { name: 'Менеджер 2', img: '/images/bg.jpg', price: '', category: 'Отдел продаж', description: 'Специалист по работе с ключевыми клиентами', phone: '+7 (495) 123-45-68', email: 'sales2@dipaul.ru' },
+  // === ПРОМЫШЛЕННАЯ АВТОМАТИЗАЦИЯ ===
+  's7-1500': { name: 'Siemens S7-1500', slug: 's7-1500', category: 'ПЛК и модули ввода-вывода', categorySlug: 'automation', description: 'Флагманская серия ПЛК, производительность до 1 МБ/мс' },
+  'compactlogix': { name: 'Allen-Bradley CompactLogix', slug: 'compactlogix', category: 'ПЛК и модули ввода-вывода', categorySlug: 'automation', description: 'Для средних задач, интеграция с Rockwell' },
+  'io-modules': { name: 'Модули расширения', slug: 'io-modules', category: 'ПЛК и модули ввода-вывода', categorySlug: 'automation', description: 'Аналоговые, цифровые, специализированные входы/выходы' },
+  'ignition': { name: 'Ignition', slug: 'ignition', category: 'SCADA-системы', categorySlug: 'automation', description: 'Платформа IIoT и визуализации, модульная архитектура' },
+  'wincc': { name: 'WinCC Unified', slug: 'wincc', category: 'SCADA-системы', categorySlug: 'automation', description: 'Интеграция с Siemens, веб-интерфейс, мобильный доступ' },
+  'custom-hmi': { name: 'Кастомные панели', slug: 'custom-hmi', category: 'SCADA-системы', categorySlug: 'automation', description: 'Разработка интерфейсов под задачи заказчика' },
+  'moxa-gateways': { name: 'Шлюзы Moxa', slug: 'moxa-gateways', category: 'Промышленный IoT', categorySlug: 'automation', description: 'Сбор данных с оборудования, протоколы Modbus, OPC UA' },
+  'cloud-platforms': { name: 'Облачные платформы', slug: 'cloud-platforms', category: 'Промышленный IoT', categorySlug: 'automation', description: 'Azure IoT / AWS IoT — хранение, аналитика, дашборды' },
+  'predictive-iot': { name: 'Предиктивная аналитика', slug: 'predictive-iot', category: 'Промышленный IoT', categorySlug: 'automation', description: 'ML-модели для прогноза отказов оборудования' },
+  'rittal-ts8': { name: 'Rittal TS8', slug: 'rittal-ts8', category: 'Шкафы управления', categorySlug: 'automation', description: 'Модульные шкафы IP55, быстрая сборка' },
+  'cabinet-cooling': { name: 'Климат-контроль', slug: 'cabinet-cooling', category: 'Шкафы управления', categorySlug: 'automation', description: 'Обогрев и охлаждение для стабильной работы электроники' },
+  'cabinet-assembly': { name: 'Сборка под ключ', slug: 'cabinet-assembly', category: 'Шкафы управления', categorySlug: 'automation', description: 'Проектирование, монтаж, тестирование, документация' },
+  'danfoss-vlt': { name: 'Danfoss VLT', slug: 'danfoss-vlt', category: 'Частотные преобразователи', categorySlug: 'automation', description: 'Для насосов и вентиляторов, энергосбережение до 30%' },
+  'abb-acs880': { name: 'ABB ACS880', slug: 'abb-acs880', category: 'Частотные преобразователи', categorySlug: 'automation', description: 'Универсальные приводы, векторное управление' },
+  'grid-sync': { name: 'Синхронизация с сетью', slug: 'grid-sync', category: 'Частотные преобразователи', categorySlug: 'automation', description: 'Рекуперация энергии, снижение гармоник' },
 
-  // === ОФИСЫ (БЕЗ характеристик) ===
-  'office-moscow': { name: 'Москва', img: '/images/bg.jpg', price: '', category: 'Офисы и представительства', description: 'Головной офис компании', address: 'ул. Примерная, д. 1, Москва, 123456', phone: '+7 (495) 123-45-67', email: 'info@dipaul.ru' },
-  'office-spb': { name: 'Санкт-Петербург', img: '/images/bg.jpg', price: '', category: 'Офисы и представительства', description: 'Региональный офис', address: 'пр. Примерный, д. 2, Санкт-Петербург, 654321', phone: '+7 (812) 123-45-67', email: 'spb@dipaul.ru' },
-  'office-ekb': { name: 'Екатеринбург', img: '/images/bg.jpg', price: '', category: 'Офисы и представительства', description: 'Региональный офис', address: 'ул. Примерная, д. 3, Екатеринбург, 112233', phone: '+7 (343) 123-45-67', email: 'ekb@dipaul.ru' },
+  // === ЦИФРОВЫЕ ДВОЙНИКИ ===
+  'process-simulate': { name: 'Siemens Process Simulate', slug: 'process-simulate', category: '3D-моделирование процессов', categorySlug: 'digital-twins', description: 'Виртуальная commissioning, отладка до физического запуска' },
+  'visual-components': { name: 'Visual Components', slug: 'visual-components', category: '3D-моделирование процессов', categorySlug: 'digital-twins', description: 'Планирование производств, расчёт узких мест' },
+  'cad-integration': { name: 'Интеграция с CAD', slug: 'cad-integration', category: '3D-моделирование процессов', categorySlug: 'digital-twins', description: 'Импорт моделей из SolidWorks, CATIA, NX' },
+  'ibm-maximo': { name: 'IBM Maximo', slug: 'ibm-maximo', category: 'Предиктивная аналитика', categorySlug: 'digital-twins', description: 'Прогноз отказов оборудования, оптимизация ТО' },
+  'cognite': { name: 'Cognite Data Fusion', slug: 'cognite', category: 'Предиктивная аналитика', categorySlug: 'digital-twins', description: 'Промышленные данные и AI, контекстуализация' },
+  'custom-ml': { name: 'Кастомные ML-модели', slug: 'custom-ml', category: 'Предиктивная аналитика', categorySlug: 'digital-twins', description: 'Разработка под конкретные процессы заказчика' },
+  'flow-simulation': { name: 'Симуляция потоков', slug: 'flow-simulation', category: 'Оптимизация циклов', categorySlug: 'digital-twins', description: 'Балансировка линий, снижение времени такта' },
+  'digital-threads': { name: 'Цифровые нити', slug: 'digital-threads', category: 'Оптимизация циклов', categorySlug: 'digital-twins', description: 'Сквозная прослеживаемость данных от заказа до отгрузки' },
+  'ab-testing': { name: 'A/B тестирование', slug: 'ab-testing', category: 'Оптимизация циклов', categorySlug: 'digital-twins', description: 'Сравнение сценариев работы в виртуальной среде' },
+  'hololens': { name: 'Microsoft HoloLens 2', slug: 'hololens', category: 'VR/AR обучение', categorySlug: 'digital-twins', description: 'AR инструкции для сборки и ремонта' },
+  'vr-trainers': { name: 'VR тренажеры', slug: 'vr-trainers', category: 'VR/AR обучение', categorySlug: 'digital-twins', description: 'Безопасное обучение операторов на виртуальных копиях' },
+  'remote-expert': { name: 'Удалённая экспертиза', slug: 'remote-expert', category: 'VR/AR обучение', categorySlug: 'digital-twins', description: 'Специалист видит через камеру оператора и даёт подсказки' },
+  'plm-systems': { name: 'PLM системы', slug: 'plm-systems', category: 'Цифровые нити', categorySlug: 'digital-twins', description: 'Управление жизненным циклом изделия' },
+  'erp-integration': { name: 'ERP интеграция', slug: 'erp-integration', category: 'Цифровые нити', categorySlug: 'digital-twins', description: 'Связь производства и склада в реальном времени' },
+  'blockchain-traceability': { name: 'Блокчейн для прослеживаемости', slug: 'blockchain-traceability', category: 'Цифровые нити', categorySlug: 'digital-twins', description: 'Неизменяемая история каждой детали' },
 
-  // === СЕРВИСНЫЙ ЦЕНТР (БЕЗ характеристик) ===
-  'service-reception': { name: 'Приём заявок', img: '/images/bg.jpg', price: '', category: 'Сервисный центр', description: 'Приём заявок на сервисное обслуживание', phone: '+7 (495) 123-45-69', email: 'service@dipaul.ru' },
-  'hotline': { name: 'Горячая линия', img: '/images/bg.jpg', price: '', category: 'Сервисный центр', description: 'Круглосуточная техническая поддержка', phone: '8 (800) 555-35-35' },
+  // === МЕРОПРИЯТИЯ ===
+  'robotica-stand': { name: 'Стенд Технопарка', slug: 'robotica-stand', category: 'Выставка Robotica 2025', categorySlug: 'events', description: '15-18 апреля, Экспоцентр, павильон 2, стенд B15' },
+  'cobot-demo': { name: 'Демонстрация коботов', slug: 'cobot-demo', category: 'Выставка Robotica 2025', categorySlug: 'events', description: 'Живые сценарии: сборка, упаковка, контроль качества' },
+  'programming-workshop': { name: 'Мастер-класс по программированию', slug: 'programming-workshop', category: 'Выставка Robotica 2025', categorySlug: 'events', description: '16 апреля, 14:00, регистрация на сайте' },
+  'industry-panel': { name: 'Панельная дискуссия', slug: 'industry-panel', category: 'Форум Industry 4.0', categorySlug: 'events', description: 'Тренды автоматизации 2025, спикеры из ГУАП, Росатома, Сбера' },
+  'networking': { name: 'Нетворкинг', slug: 'networking', category: 'Форум Industry 4.0', categorySlug: 'events', description: 'Встреча с производителями и интеграторами' },
+  'startup-zone': { name: 'Стартап-зона', slug: 'startup-zone', category: 'Форум Industry 4.0', categorySlug: 'events', description: 'Питчи инновационных проектов, гранты до 5 млн ₽' },
+  'cobot-basic': { name: 'Базовый курс', slug: 'cobot-basic', category: 'Семинар по коботам', categorySlug: 'events', description: '12 мая, очно в СПб, 2 дня, сертификат' },
+  'cobot-advanced': { name: 'Продвинутая интеграция', slug: 'cobot-advanced', category: 'Семинар по коботам', categorySlug: 'events', description: '20 мая, онлайн, работа с PLC и SCADA' },
+  'cobot-cases': { name: 'Кейсы внедрения', slug: 'cobot-cases', category: 'Семинар по коботам', categorySlug: 'events', description: 'Разбор реальных проектов от заказчиков' },
+  'amr-webinar': { name: 'Вебинар по AMR', slug: 'amr-webinar', category: 'Онлайн-трансляции', categorySlug: 'events', description: 'Расписание на сайте, запись доступна после регистрации' },
+  'webinar-archive': { name: 'Архив записей', slug: 'webinar-archive', category: 'Онлайн-трансляции', categorySlug: 'events', description: 'Более 50 часов контента по автоматизации' },
+  'qa-sessions': { name: 'Q&A сессии', slug: 'qa-sessions', category: 'Онлайн-трансляции', categorySlug: 'events', description: 'Ежемесячные ответы на вопросы от инженеров Технопарка' },
 
-  // === ВАКАНСИИ (БЕЗ характеристик) ===
-  'sales-engineer': { name: 'Инженер по продажам', img: '/images/bg.jpg', price: 'от 150 000 ₽', category: 'Вакансии', description: 'Требуется опытный инженер по продажам', experience: 'от 3 лет', location: 'Москва' },
-  'service-engineer': { name: 'Сервисный инженер', img: '/images/bg.jpg', price: 'от 120 000 ₽', category: 'Вакансии', description: 'Требуется сервисный инженер', experience: 'от 2 лет', location: 'Москва, командировки' },
-  'project-manager': { name: 'Менеджер проектов', img: '/images/bg.jpg', price: 'от 180 000 ₽', category: 'Вакансии', description: 'Требуется менеджер проектов', experience: 'от 5 лет', location: 'Москва' },
+  // === О ТЕХНОПАРКЕ ===
+  'history': { name: 'Основание в 2018', slug: 'history', category: 'История и миссия', categorySlug: 'about', description: 'Путь от лаборатории ГУАП до федерального технопарка' },
+  'mission': { name: 'Миссия и ценности', slug: 'mission', category: 'История и миссия', categorySlug: 'about', description: 'Развитие Industry 4.0 в России через образование и инновации' },
+  'achievements': { name: 'Достижения', slug: 'achievements', category: 'История и миссия', categorySlug: 'about', description: '50+ внедрённых проектов, 200+ партнёров, 15 патентов' },
+  'ceo': { name: 'Генеральный директор', slug: 'ceo', category: 'Руководство', categorySlug: 'about', description: 'Иванов Алексей Петрович, 15 лет в автоматизации' },
+  'cto': { name: 'Технический директор', slug: 'cto', category: 'Руководство', categorySlug: 'about', description: 'Смирнов Дмитрий Игоревич, экс-инженер Siemens' },
+  'team': { name: 'Команда', slug: 'team', category: 'Руководство', categorySlug: 'about', description: '40+ инженеров, разработчиков и менеджеров' },
+  'partners-universities': { name: 'Университеты', slug: 'partners-universities', category: 'Партнёры и клиенты', categorySlug: 'about', description: 'ГУАП, ИТМО, Политех, МГТУ им. Баумана' },
+  'partners-vendors': { name: 'Производители', slug: 'partners-vendors', category: 'Партнёры и клиенты', categorySlug: 'about', description: 'Universal Robots, Siemens, Festo, SICK' },
+  'clients': { name: 'Клиенты', slug: 'clients', category: 'Партнёры и клиенты', categorySlug: 'about', description: 'Росатом, Ростех, Яндекс, Сбер, АвтоВАЗ' },
+  'iso-9001': { name: 'ISO 9001:2015', slug: 'iso-9001', category: 'Сертификаты', categorySlug: 'about', description: 'Система менеджмента качества' },
+  'software-license': { name: 'Лицензия на ПО', slug: 'software-license', category: 'Сертификаты', categorySlug: 'about', description: 'Реестр отечественного ПО Минцифры' },
+  'minpromtorg': { name: 'Аккредитация Минпромторга', slug: 'minpromtorg', category: 'Сертификаты', categorySlug: 'about', description: 'Статус индустриального партнёра' },
+  'main-office': { name: 'Главный офис', slug: 'main-office', category: 'Контакты и адрес', categorySlug: 'about', description: 'г. Санкт-Петербург, ул. Гастелло, д. 15, офис 304' },
+  'requisites': { name: 'Реквизиты', slug: 'requisites', category: 'Контакты и адрес', categorySlug: 'about', description: 'ИНН 7801234567, ОГРН 1157846123456' },
+  'map': { name: 'Карта проезда', slug: 'map', category: 'Контакты и адрес', categorySlug: 'about', description: 'М. «Обводный канал», 7 минут пешком' },
 
-  // === СТАЖИРОВКИ (БЕЗ характеристик) ===
-  'internship': { name: 'Стажировка для студентов', img: '/images/bg.jpg', price: 'от 30 000 ₽', category: 'Стажировки', description: 'Оплачиваемая стажировка для студентов технических ВУЗов', experience: '3 месяца', location: 'Москва' },
-  'summer-school': { name: 'Летняя школа', img: '/images/bg.jpg', price: 'от 40 000 ₽', category: 'Стажировки', description: 'Летняя производственная практика', experience: 'Июнь-август', location: 'Москва' },
+  // === КАРЬЕРА (С ЗАРПЛАТАМИ) ===
+  'robotics-junior': { name: 'Junior', slug: 'robotics-junior', category: 'Инженер-робототехник', categorySlug: 'careers', description: 'Настройка и пуск коботов, обучение', salary: 'от 80 000 ₽' },
+  'robotics-middle': { name: 'Middle', slug: 'robotics-middle', category: 'Инженер-робототехник', categorySlug: 'careers', description: 'Проектирование ячеек, интеграция с ПЛК', salary: 'от 140 000 ₽' },
+  'robotics-senior': { name: 'Senior', slug: 'robotics-senior', category: 'Инженер-робототехник', categorySlug: 'careers', description: 'Архитектура решений, менторство', salary: 'от 200 000 ₽' },
+  'asutp-engineer': { name: 'Инженер АСУ ТП', slug: 'asutp-engineer', category: 'Специалист по автоматизации', categorySlug: 'careers', description: 'ПЛК, SCADA, промышленные сети', salary: 'от 130 000 ₽' },
+  'plc-programmer': { name: 'Программист ПЛК', slug: 'plc-programmer', category: 'Специалист по автоматизации', categorySlug: 'careers', description: 'Siemens, Beckhoff, B&R', salary: 'от 150 000 ₽' },
+  'integrator': { name: 'Интегратор', slug: 'integrator', category: 'Специалист по автоматизации', categorySlug: 'careers', description: 'Связка роботов, датчиков, систем управления', salary: 'от 160 000 ₽' },
+  'pm-robotics': { name: 'PM Robotics', slug: 'pm-robotics', category: 'Менеджер проектов', categorySlug: 'careers', description: 'Ведение проектов под ключ от ТЗ до сдачи', salary: 'от 160 000 ₽' },
+  'pm-automation': { name: 'PM Автоматизация', slug: 'pm-automation', category: 'Менеджер проектов', categorySlug: 'careers', description: 'Координация команд, бюджет, сроки', salary: 'от 170 000 ₽' },
+  'business-analyst': { name: 'Бизнес-аналитик', slug: 'business-analyst', category: 'Менеджер проектов', categorySlug: 'careers', description: 'Сбор требований, ТЗ, коммуникация с заказчиком', salary: 'от 140 000 ₽' },
+  'summer-internship': { name: 'Летняя практика', slug: 'summer-internship', category: 'Стажировки для студентов', categorySlug: 'careers', description: '3 месяца, оплачиваемая, реальные задачи', salary: 'от 45 000 ₽/мес' },
+  'thesis-project': { name: 'Дипломный проект', slug: 'thesis-project', category: 'Стажировки для студентов', categorySlug: 'careers', description: 'Тема от Технопарка, менторство, возможность трудоустройства', salary: 'от 50 000 ₽' },
+  'hackathons': { name: 'Хакатоны', slug: 'hackathons', category: 'Стажировки для студентов', categorySlug: 'careers', description: 'Командные соревнования, призы, карьерные предложения', salary: '' },
+  'office-culture': { name: 'Офис и атмосфера', slug: 'office-culture', category: 'Корпоративная культура', categorySlug: 'careers', description: 'Современный коворкинг, лаборатории, зона отдыха' },
+  'learning': { name: 'Обучение и рост', slug: 'learning', category: 'Корпоративная культура', categorySlug: 'careers', description: 'Сертификации за счёт компании, конференции, менторство' },
+  'team-culture': { name: 'Команда', slug: 'team-culture', category: 'Корпоративная культура', categorySlug: 'careers', description: 'Открытость, взаимопомощь, фокус на результате' },
 
-  // === НОВОСТИ (БЕЗ характеристик) ===
-  'new-office': { name: 'Открытие нового офиса', img: '/images/bg.jpg', price: '', category: 'Новости компании', description: '15 марта 2025 — Открыт офис в Санкт-Петербурге', date: '15.03.2025' },
-  'new-contract': { name: 'Новый контракт', img: '/images/bg.jpg', price: '', category: 'Новости компании', description: '10 марта 2025 — Поставка оборудования для Роскосмоса', date: '10.03.2025' },
-  'chipexpo': { name: 'Выставка ChipEXPO', img: '/images/bg.jpg', price: '', category: 'Новости компании', description: '5 марта 2025 — Приглашаем на наш стенд', date: '05.03.2025' },
+  // === ПОДДЕРЖКА ===
+  'warranty-std': { name: 'Стандартная гарантия', slug: 'warranty-std', category: 'Гарантийное обслуживание', categorySlug: 'support', description: '12 месяцев на оборудование, бесплатный ремонт' },
+  'warranty-ext': { name: 'Расширенная гарантия', slug: 'warranty-ext', category: 'Гарантийное обслуживание', categorySlug: 'support', description: 'До 36 месяцев с выездом инженера и заменой узлов' },
+  'software-warranty': { name: 'Гарантия на ПО', slug: 'software-warranty', category: 'Гарантийное обслуживание', categorySlug: 'support', description: 'Обновления и исправления в течение срока лицензии' },
+  'remote-support': { name: 'Удалённая помощь', slug: 'remote-support', category: 'Техническая поддержка 24/7', categorySlug: 'support', description: 'TeamViewer, AnyDesk, телефон, чат — ответ в течение 15 минут' },
+  'onsite-support': { name: 'Выезд инженера', slug: 'onsite-support', category: 'Техническая поддержка 24/7', categorySlug: 'support', description: 'По всей России, срок прибытия до 48 часов' },
+  'knowledge-base': { name: 'База знаний', slug: 'knowledge-base', category: 'Техническая поддержка 24/7', categorySlug: 'support', description: 'Статьи, видео, инструкции — доступно 24/7' },
+  'diagnostics': { name: 'Диагностика узлов', slug: 'diagnostics', category: 'Ремонт и диагностика', categorySlug: 'support', description: 'Выявление неисправностей, отчёт с рекомендациями' },
+  'board-repair': { name: 'Восстановление плат', slug: 'board-repair', category: 'Ремонт и диагностика', categorySlug: 'support', description: 'Компонентный ремонт, замена микросхем' },
+  'calibration': { name: 'Калибровка', slug: 'calibration', category: 'Ремонт и диагностика', categorySlug: 'support', description: 'Восстановление точности после ремонта или длительного простоя' },
+  'original-parts': { name: 'Оригинальные запчасти', slug: 'original-parts', category: 'Запасные части', categorySlug: 'support', description: 'Склад в СПб, отгрузка 24 часа, гарантия' },
+  'consumables': { name: 'Расходные материалы', slug: 'consumables', category: 'Запасные части', categorySlug: 'support', description: 'Сопла, захваты, кабели, фильтры — всегда в наличии' },
+  'compatible-parts': { name: 'Аналоги и совместимые', slug: 'compatible-parts', category: 'Запасные части', categorySlug: 'support', description: 'Бюджетные альтернативы без потери качества' },
+  'support-request': { name: 'Заявка на поддержку', slug: 'support-request', category: 'Форма обратной связи', categorySlug: 'support', description: 'Заполните форму на сайте — ответ в течение 2 часов' },
+  'quote-request': { name: 'Запрос коммерческого предложения', slug: 'quote-request', category: 'Форма обратной связи', categorySlug: 'support', description: 'Опишите задачу — подготовим решение и расчёт' },
+  'callback': { name: 'Обратный звонок', slug: 'callback', category: 'Форма обратной связи', categorySlug: 'support', description: 'Оставьте номер — перезвоним в удобное время' },
 
-  // === ВЫСТАВКИ (БЕЗ характеристик) ===
-  'chipexpo-2025': { name: 'ChipEXPO 2025', img: '/images/bg.jpg', price: '', category: 'Выставки', description: '15-18 апреля, Москва, Крокус Экспо', date: '15-18.04.2025', location: 'Москва, Крокус Экспо' },
-  'electrontech-2025': { name: 'ElectronTech 2025', img: '/images/bg.jpg', price: '', category: 'Выставки', description: '20-22 мая, Санкт-Петербург', date: '20-22.05.2025', location: 'Санкт-Петербург' },
-  'iot-2025': { name: 'IoT Solutions 2025', img: '/images/bg.jpg', price: '', category: 'Выставки', description: '10-12 июня, Москва', date: '10-12.06.2025', location: 'Москва' },
-
-  // === КОНФЕРЕНЦИИ (БЕЗ характеристик) ===
-  'electronics-conf': { name: 'Конференция по электронике', img: '/images/bg.jpg', price: 'бесплатно', category: 'Конференции', description: '25 апреля, Москва', date: '25.04.2025', location: 'Москва' },
-  'manufacturers-forum': { name: 'Форум производителей', img: '/images/bg.jpg', price: 'бесплатно', category: 'Конференции', description: '15 мая, онлайн', date: '15.05.2025', location: 'Онлайн' },
-
-  // === РУКОВОДСТВО (БЕЗ характеристик) ===
-  'ceo': { name: 'Генеральный директор', img: '/images/bg.jpg', price: '', category: 'Руководство', description: 'Иванов Иван Иванович', position: 'Генеральный директор', experience: '15+ лет' },
-  'cto': { name: 'Технический директор', img: '/images/bg.jpg', price: '', category: 'Руководство', description: 'Петров Петр Петрович', position: 'Технический директор', experience: '20+ лет' },
-
-  // === ИСТОРИЯ КОМПАНИИ (БЕЗ характеристик) ===
-  'history-1995': { name: '1995 — Основание', img: '/images/bg.jpg', price: '', category: 'История компании', description: 'Начало пути', date: '1995' },
-  'history-2005': { name: '2005 — Лидер рынка', img: '/images/bg.jpg', price: '', category: 'История компании', description: '10 лет успеха', date: '2005' },
-  'history-2025': { name: '2025 — 30 лет', img: '/images/bg.jpg', price: '', category: 'История компании', description: 'Современный этап', date: '2025' },
-
-  // === ОСТАЛЬНЫЕ ТОВАРЫ С ХАРАКТЕРИСТИКАМИ ===
-  'die-bonder-x1': { name: 'Установка для монтажа кристаллов', img: '/images/bg.jpg', price: 'от 12 000 000 ₽', category: 'Производство микроэлектроники', description: 'Точный монтаж чипов для микроэлектроники.', characteristics: { 'Точность': '±5 мкм', 'Скорость': 'до 5000 чипов/час', 'Тип': 'автоматический' }, features: ['Высокая точность', 'Автоматическая подача', 'Контроль качества'] },
-  'wire-bonder-pro': { name: 'Проволочный компаратор', img: '/images/bg.jpg', price: 'от 5 500 000 ₽', category: 'Производство микроэлектроники', description: 'Сварка проволокой для микроэлектроники.', characteristics: { 'Диаметр проволоки': '15-500 мкм', 'Скорость': 'до 15 сварок/сек', 'Тип': 'ультразвуковой' }, features: ['Автоматическая сварка', 'Контроль качества', 'Надежность'] },
-  'annealing-furnace': { name: 'Печь для отжига', img: '/images/bg.jpg', price: 'от 3 200 000 ₽', category: 'Производство микроэлектроники', description: 'Термическая обработка полупроводников.', characteristics: { 'Температура': 'до 1200°C', 'Объем': '50 л', 'Контроль': 'автоматический' }, features: ['Стабильность', 'Безопасность', 'Программируемые циклы'] },
-  'climate-chamber': { name: 'Климатическая камера', img: '/images/bg.jpg', price: 'от 1 500 000 ₽', category: 'Испытательное оборудование', description: 'Испытания при различных температурах и влажности.', characteristics: { 'Температура': 'от -70°C до +180°C', 'Влажность': '10-98%', 'Объем': '1000 л' }, features: ['Точный контроль', 'Программируемые циклы', 'Безопасность'] },
-  'vibration-tester': { name: 'Вибростенд', img: '/images/bg.jpg', price: 'от 2 800 000 ₽', category: 'Испытательное оборудование', description: 'Испытания вибрацией для электроники.', characteristics: { 'Частота': '5-3000 Гц', 'Нагрузка': 'до 500 кг', 'Ускорение': 'до 100g' }, features: ['Широкий диапазон', 'Автоматическое управление', 'Протоколы испытаний'] },
-  'salt-spray': { name: 'Камера соли и тумана', img: '/images/bg.jpg', price: 'от 650 000 ₽', category: 'Испытательное оборудование', description: 'Коррозионные испытания материалов.', characteristics: { 'Температура': '35°C', 'Концентрация': '5% NaCl', 'Объем': '150 л' }, features: ['Стандарты ГОСТ/ISO', 'Автоматика', 'Надежность'] },
-  'calibration-complex': { name: 'Поверочный комплекс', img: '/images/bg.jpg', price: 'от 950 000 ₽', category: 'Метрология и поверка', description: 'Поверка измерительных приборов.', characteristics: { 'Каналы': '8', 'Точность': '0.01%', 'Интерфейс': 'USB, LAN' }, features: ['Автоматическая поверка', 'Протоколы', 'Сертификация'] },
-  'calibrator-multi': { name: 'Калибратор', img: '/images/bg.jpg', price: 'от 420 000 ₽', category: 'Метрология и поверка', description: 'Многофункциональный калибратор.', characteristics: { 'Тип': 'Универсальный', 'Точность': '0.05%', 'Диапазон': 'широкий' }, features: ['Портативность', 'Точность', 'Удобство'] },
-  'voltage-reference': { name: 'Эталон напряжения', img: '/images/bg.jpg', price: 'от 380 000 ₽', category: 'Метрология и поверка', description: 'Эталон напряжения класса 0.01.', characteristics: { 'Класс': '0.01', 'Стабильность': 'Высокая', 'Диапазон': '1-1000 В' }, features: ['Эталон', 'Надежность', 'Сертификация'] },
-  'soldering-station': { name: 'Паяльная станция', img: '/images/bg.jpg', price: 'от 45 000 ₽', category: 'Ручная пайка и визуальный контроль', description: 'Цифровая паяльная станция 150W.', characteristics: { 'Мощность': '150W', 'Температура': 'до 450°C', 'Тип': 'цифровая' }, features: ['Цифровой контроль', 'ESD защита', 'Быстрый нагрев'] },
-  'stereo-microscope': { name: 'Микроскоп стерео', img: '/images/bg.jpg', price: 'от 85 000 ₽', category: 'Ручная пайка и визуальный контроль', description: 'Стереомикроскоп с увеличением 7x-45x.', characteristics: { 'Увеличение': '7x-45x', 'Подсветка': 'LED', 'Тип': 'стерео' }, features: ['Широкий угол', 'Регулировка', 'Комфорт'] },
-  'inspection-system': { name: 'Инспекционная система', img: '/images/bg.jpg', price: 'от 1 200 000 ₽', category: 'Ручная пайка и визуальный контроль', description: 'Автоматический визуальный контроль.', characteristics: { 'Тип': 'AOI', 'Скорость': 'Высокая', 'Разрешение': '4K' }, features: ['Автоматика', 'Точность', 'Протоколы'] },
-  'cad-pro': { name: 'CAD система Pro', img: '/images/bg.jpg', price: 'от 150 000 ₽', category: 'Программное обеспечение', description: 'Проектирование печатных плат.', characteristics: { 'Лицензия': 'бессрочная', 'Поддержка': '1 год', '3D': 'да' }, features: ['3D моделирование', 'Библиотеки компонентов', 'Экспорт'] },
-  'cam-system': { name: 'CAM система', img: '/images/bg.jpg', price: 'от 200 000 ₽', category: 'Программное обеспечение', description: 'Подготовка производства.', characteristics: { 'Форматы': 'Gerber, ODB++', 'Проверка': 'DRC', 'Оптимизация': 'да' }, features: ['Автоматизация', 'Оптимизация', 'Интеграция'] },
-  'mes-system': { name: 'Система управления', img: '/images/bg.jpg', price: 'от 500 000 ₽', category: 'Программное обеспечение', description: 'MES для производства.', characteristics: { 'Модули': 'Учет, Планирование', 'Интеграция': 'ERP', 'Аналитика': 'да' }, features: ['Контроль', 'Аналитика', 'Отчетность'] },
-  'clean-room': { name: 'Чистая комната', img: '/images/bg.jpg', price: 'от 5 000 000 ₽', category: 'Инженерная инфраструктура', description: 'Чистое помещение класса чистоты ISO 5.', characteristics: { 'Класс': 'ISO 5', 'Площадь': 'до 100 м²', 'Климат': 'контроль' }, features: ['Контроль чистоты', 'Климат-контроль', 'Сертификация'] },
-  'ventilation-system': { name: 'Вентиляционная система', img: '/images/bg.jpg', price: 'от 1 800 000 ₽', category: 'Инженерная инфраструктура', description: 'Промышленная вентиляция.', characteristics: { 'Производительность': '5000 м³/ч', 'Фильтрация': 'HEPA', 'Управление': 'автоматическое' }, features: ['Энергоэффективность', 'Автоматика', 'Надежность'] },
-  'water-purification': { name: 'Система очистки воды', img: '/images/bg.jpg', price: 'от 950 000 ₽', category: 'Инженерная инфраструктура', description: 'Деионизация воды для производства.', characteristics: { 'Тип': 'Деионизатор', 'Производительность': '100 л/ч', 'Качество': 'высокое' }, features: ['Чистота', 'Надежность', 'Автоматика'] },
-  'esd-workbench': { name: 'Антистатический верстак', img: '/images/bg.jpg', price: 'от 45 000 ₽', category: 'Оснащение производственных помещений', description: 'ESD верстак для работы с электроникой.', characteristics: { 'Размер': '1500 × 750 мм', 'Нагрузка': 'до 300 кг', 'ESD': 'защита' }, features: ['ESD защита', 'Регулировка высоты', 'Прочность'] },
-  'industrial-shelf': { name: 'Стеллаж промышленный', img: '/images/bg.jpg', price: 'от 25 000 ₽', category: 'Оснащение производственных помещений', description: 'Промышленный стеллаж.', characteristics: { 'Грузоподъемность': '500 кг', 'Высота': '2000 мм', 'Полки': '5' }, features: ['Прочность', 'Модульность', 'Сборка'] },
-  'storage-cabinet': { name: 'Шкаф для хранения', img: '/images/bg.jpg', price: 'от 35 000 ₽', category: 'Оснащение производственных помещений', description: 'Шкаф для хранения компонентов.', characteristics: { 'Объем': '200 л', 'Замок': 'да', 'Материал': 'металл' }, features: ['Безопасность', 'Вместимость', 'Организация'] },
-  'esd-chair': { name: 'Стул антистатический', img: '/images/bg.jpg', price: 'от 15 000 ₽', category: 'Оснащение производственных помещений', description: 'ESD регулируемый стул.', characteristics: { 'Нагрузка': '120 кг', 'Высота': 'регулируемая', 'ESD': 'защита' }, features: ['ESD', 'Комфорт', 'Регулировка'] },
-  'pcb-line': { name: 'Линия сборки плат', img: '/images/bg.jpg', price: 'от 20 000 000 ₽', category: 'Производство электроники и ЭКБ', description: 'Полный цикл производства печатных плат.', characteristics: { 'Производительность': 'Высокая', 'Автоматизация': 'Полная', 'Качество': 'высокое' }, features: ['Скорость', 'Интеграция', 'Качество'] },
-  'ekb-equipment': { name: 'Оборудование для ЭКБ', img: '/images/bg.jpg', price: 'от 10 000 000 ₽', category: 'Производство электроники и ЭКБ', description: 'Производство электронных компонентов.', characteristics: { 'Тип': 'Комплексное', 'Точность': 'Высокая', 'Автоматизация': 'Полная' }, features: ['Комплексность', 'Точность', 'Надежность'] },
-  'opk-equipment': { name: 'Специализированное оборудование ОПК', img: '/images/bg.jpg', price: 'по запросу', category: 'Оборонно-промышленный комплекс', description: 'Оборудование по техническому заданию.', characteristics: { 'Сертификация': 'Военная', 'Надежность': 'Повышенная', 'Качество': 'ГОСТ' }, features: ['Соответствие ГОСТ', 'Надежность', 'Безопасность'] },
-  'quality-control': { name: 'Системы контроля качества', img: '/images/bg.jpg', price: 'по запросу', category: 'Оборонно-промышленный комплекс', description: 'Военная приемка и контроль.', characteristics: { 'Тип': 'Комплексный', 'Стандарты': 'Военные', 'Автоматика': 'да' }, features: ['Контроль', 'Стандарты', 'Надежность'] },
-  'space-equipment': { name: 'Оборудование для космоса', img: '/images/bg.jpg', price: 'по запросу', category: 'Космическая промышленность', description: 'Сертифицированное космическое оборудование.', characteristics: { 'Сертификация': 'Космическая', 'Точность': 'Высокая', 'Надежность': 'Повышенная' }, features: ['Сертификация', 'Надежность', 'Качество'] },
-  'space-vibration': { name: 'Вибростенд космический', img: '/images/bg.jpg', price: 'от 15 000 000 ₽', category: 'Космическая промышленность', description: 'Испытания спутников вибрацией.', characteristics: { 'Частота': '5-3000 Гц', 'Нагрузка': 'до 1000 кг', 'Точность': 'Высокая' }, features: ['Космические стандарты', 'Точность', 'Надежность'] },
-  'aviation-equipment': { name: 'Оборудование для авиации', img: '/images/bg.jpg', price: 'по запросу', category: 'Авиастроение', description: 'Оборудование с сертификатом FAA.', characteristics: { 'Сертификация': 'FAA', 'Точность': 'Прецизионная', 'Качество': 'Высокое' }, features: ['Сертификация', 'Качество', 'Надежность'] },
-  'aviation-measurement': { name: 'Контрольно-измерительное', img: '/images/bg.jpg', price: 'от 2 500 000 ₽', category: 'Авиастроение', description: 'Прецизионные измерения для авиации.', characteristics: { 'Точность': 'Прецизионная', 'Диапазон': 'Широкий', 'Стандарты': 'Авиационные' }, features: ['Точность', 'Стандарты', 'Надежность'] },
-  'auto-electronics': { name: 'Линия сборки электроники', img: '/images/bg.jpg', price: 'от 25 000 000 ₽', category: 'Автомобилестроение', description: 'Линия для автоэлектроники.', characteristics: { 'Производительность': '1000 плат/час', 'Автоматизация': 'Полная', 'Качество': 'IATF 16949' }, features: ['Высокая скорость', 'Качество', 'Стандарты'] },
-  'auto-tester': { name: 'Тестер автомобильный', img: '/images/bg.jpg', price: 'от 850 000 ₽', category: 'Автомобилестроение', description: 'Диагностика автомобильной электроники.', characteristics: { 'Тип': 'Диагностический', 'Интерфейсы': 'CAN, LIN', 'Точность': 'Высокая' }, features: ['Диагностика', 'Интерфейсы', 'Точность'] },
-  'energy-equipment': { name: 'Оборудование для энергетики', img: '/images/bg.jpg', price: 'по запросу', category: 'Энергетика', description: 'Высоковольтное оборудование.', characteristics: { 'Напряжение': 'Высокое', 'Безопасность': 'Повышенная', 'Стандарты': 'Энергетические' }, features: ['Безопасность', 'Надежность', 'Стандарты'] },
-  'power-analyzer': { name: 'Анализатор качества энергии', img: '/images/bg.jpg', price: 'от 450 000 ₽', category: 'Энергетика', description: 'Анализатор класса А.', characteristics: { 'Класс': 'A', 'Каналы': '4', 'Диапазон': 'Широкий' }, features: ['Точность', 'Анализ', 'Отчетность'] },
-  'fiber-tester': { name: 'Тестер оптоволокна', img: '/images/bg.jpg', price: 'от 350 000 ₽', category: 'Телекоммуникации и связь', description: 'OTDR тестер для оптоволокна.', characteristics: { 'Дальность': 'до 100 км', 'Длина волны': '1310/1550 нм', 'Точность': 'Высокая' }, features: ['Точность', 'Портативность', 'Надежность'] },
-  'network-analyzer': { name: 'Анализатор сетей', img: '/images/bg.jpg', price: 'от 1 200 000 ₽', category: 'Телекоммуникации и связь', description: 'Анализатор сетей 5G ready.', characteristics: { 'Стандарты': '5G', 'Диапазон': 'Широкий', 'Интерфейсы': 'Много' }, features: ['5G ready', 'Анализ', 'Универсальность'] },
-  'measurement-complex': { name: 'Измерительные комплексы', img: '/images/bg.jpg', price: 'от 1 500 000 ₽', category: 'Радиоэлектронная промышленность', description: 'Комплексы для РЭП.', characteristics: { 'Тип': 'Комплексный', 'Точность': 'Высокая', 'Каналы': 'Много' }, features: ['Комплексность', 'Точность', 'Надежность'] },
-  'test-stands': { name: 'Стенды испытаний', img: '/images/bg.jpg', price: 'от 3 000 000 ₽', category: 'Радиоэлектронная промышленность', description: 'Комплексные стенды.', characteristics: { 'Тип': 'Комплексный', 'Автоматизация': 'Полная', 'Протоколы': 'Много' }, features: ['Автоматика', 'Протоколы', 'Надежность'] },
-  'university-equipment': { name: 'Оборудование для ВУЗов', img: '/images/bg.jpg', price: 'по запросу', category: 'Наука и образование', description: 'Учебные комплексы.', characteristics: { 'Тип': 'Учебное', 'Комплекты': 'Да', 'Поддержка': 'Да' }, features: ['Образование', 'Гибкость', 'Поддержка'] },
-  'lab-stands': { name: 'Лабораторные стенды', img: '/images/bg.jpg', price: 'от 500 000 ₽', category: 'Наука и образование', description: 'Для исследований.', characteristics: { 'Тип': 'Исследовательское', 'Точность': 'Высокая', 'Гибкость': 'Да' }, features: ['Исследования', 'Точность', 'Гибкость'] },
-  'railway-systems': { name: 'Системы для ЖД', img: '/images/bg.jpg', price: 'по запросу', category: 'Транспортная инфраструктура', description: 'Железнодорожная автоматика.', characteristics: { 'Тип': 'ЖД', 'Надежность': 'Высокая', 'Безопасность': 'Повышенная' }, features: ['Безопасность', 'Автоматика', 'Надежность'] },
-  'metro-equipment': { name: 'Метро оборудование', img: '/images/bg.jpg', price: 'по запросу', category: 'Транспортная инфраструктура', description: 'Системы управления метро.', characteristics: { 'Тип': 'Метро', 'Надежность': 'Высокая', 'Стандарты': 'Транспортные' }, features: ['Безопасность', 'Управление', 'Стандарты'] },
-  'production-audit': { name: 'Аудит производства', img: '/images/bg.jpg', price: 'от 500 000 ₽', category: 'Техническое перевооружение', description: 'Анализ текущего состояния.', characteristics: { 'Срок': '2-4 недели', 'Отчет': 'Полный', 'Эксперты': 'Да' }, features: ['Анализ', 'Рекомендации', 'Опыт'] },
-  'modernization-project': { name: 'Проект модернизации', img: '/images/bg.jpg', price: 'от 1 000 000 ₽', category: 'Техническое перевооружение', description: 'Разработка концепции.', characteristics: { 'Срок': '1-3 месяца', 'Документация': 'Полная', '3D': 'Да' }, features: ['Проектирование', 'Оптимизация', '3D'] },
-  'turnkey-implementation': { name: 'Внедрение под ключ', img: '/images/bg.jpg', price: 'по запросу', category: 'Техническое перевооружение', description: 'Полный цикл работ.', characteristics: { 'Срок': 'По договору', 'Гарантия': 'Полная', 'Поддержка': 'Да' }, features: ['Комплексность', 'Гарантия', 'Поддержка'] },
-  'line-design': { name: 'Проектирование линий', img: '/images/bg.jpg', price: 'от 800 000 ₽', category: 'Инжиниринг', description: '3D моделирование.', characteristics: { 'Формат': '3D CAD', 'Срок': '2-6 недель', 'Документация': 'Полная' }, features: ['3D модели', 'Документация', 'Оптимизация'] },
-  'system-integration': { name: 'Интеграция систем', img: '/images/bg.jpg', price: 'от 1 500 000 ₽', category: 'Инжиниринг', description: 'Автоматизация.', characteristics: { 'Тип': 'Комплексный', 'Протоколы': 'Много', 'Поддержка': 'Да' }, features: ['Автоматизация', 'Интеграция', 'Поддержка'] },
-  'technical-audit': { name: 'Технический аудит', img: '/images/bg.jpg', price: 'от 300 000 ₽', category: 'Аудит и консалтинг', description: 'Оценка оборудования.', characteristics: { 'Срок': '1-2 недели', 'Отчет': 'Детальный', 'Эксперты': 'Да' }, features: ['Оценка', 'Рекомендации', 'Опыт'] },
-  'consulting': { name: 'Консалтинг', img: '/images/bg.jpg', price: 'от 10 000 ₽/час', category: 'Аудит и консалтинг', description: 'Экспертные консультации.', characteristics: { 'Формат': 'Онлайн/Очный', 'Эксперты': 'Да', 'Опыт': '15+ лет' }, features: ['Экспертиза', 'Гибкость', 'Опыт'] },
-  'turnkey-supply': { name: 'Поставка под ключ', img: '/images/bg.jpg', price: 'индивидуально', category: 'Поставка оборудования', description: 'Логистика и таможня.', characteristics: { 'Срок': 'По договору', 'Гарантия': 'Полная', 'Логистика': 'Мир' }, features: ['Логистика', 'Таможня', 'Гарантия'] },
-  'foreign-purchase': { name: 'Закупка за рубежом', img: '/images/bg.jpg', price: 'индивидуально', category: 'Поставка оборудования', description: 'Прямые контракты.', characteristics: { 'Страны': 'Мир', 'Контракты': 'Прямые', 'Поддержка': 'Да' }, features: ['Прямые контракты', 'Поддержка', 'Опыт'] },
-  'equipment-installation': { name: 'Монтаж оборудования', img: '/images/bg.jpg', price: 'от 200 000 ₽', category: 'Монтаж и пусконаладка', description: 'Установка и подключение.', characteristics: { 'Срок': 'По договору', 'Гарантия': '1 год', 'Специалисты': 'Да' }, features: ['Монтаж', 'Настройка', 'Гарантия'] },
-  'commissioning': { name: 'Пусконаладка', img: '/images/bg.jpg', price: 'от 300 000 ₽', category: 'Монтаж и пусконаладка', description: 'Настройка и тесты.', characteristics: { 'Срок': 'По договору', 'Тесты': 'Полные', 'Протоколы': 'Да' }, features: ['Настройка', 'Тесты', 'Протоколы'] },
-  'operator-course': { name: 'Курс операторов', img: '/images/bg.jpg', price: 'от 50 000 ₽', category: 'Обучение персонала', description: '5 дней, практика.', characteristics: { 'Длительность': '5 дней', 'Формат': 'Очный', 'Практика': 'Да' }, features: ['Практика', 'Сертификат', 'Опыт'] },
-  'engineer-course': { name: 'Курс инженеров', img: '/images/bg.jpg', price: 'от 80 000 ₽', category: 'Обучение персонала', description: '10 дней, углублённый.', characteristics: { 'Длительность': '10 дней', 'Формат': 'Очный', 'Уровень': 'Углубленный' }, features: ['Углубленный', 'Сертификат', 'Опыт'] },
-  'warranty-1year': { name: 'Гарантия 1 год', img: '/images/bg.jpg', price: 'включено', category: 'Гарантийное обслуживание', description: 'Стандартная гарантия.', characteristics: { 'Срок': '1 год', 'Поддержка': '24/7', 'Ремонт': 'Да' }, features: ['Гарантия', 'Поддержка', 'Ремонт'] },
-  'warranty-3years': { name: 'Гарантия 3 года', img: '/images/bg.jpg', price: 'от 5% от стоимости', category: 'Гарантийное обслуживание', description: 'Расширенная гарантия.', characteristics: { 'Срок': '3 года', 'Поддержка': '24/7', 'Ремонт': 'Да' }, features: ['Расширенная', 'Поддержка', 'Выгода'] },
-  'service-contract': { name: 'Сервисный контракт', img: '/images/bg.jpg', price: 'от 100 000 ₽/год', category: 'Постгарантийное обслуживание', description: 'Ежегодное ТО.', characteristics: { 'Срок': '1 год', 'ТО': '2 раза в год', 'Выезд': 'Да' }, features: ['ТО', 'Поддержка', 'Выезд'] },
-  'specialist-visit': { name: 'Выезд специалиста', img: '/images/bg.jpg', price: 'от 30 000 ₽', category: 'Постгарантийное обслуживание', description: 'По России.', characteristics: { 'Регион': 'Россия', 'Срок': '1-3 дня', 'Эксперты': 'Да' }, features: ['Выезд', 'Эксперты', 'Оперативность'] },
-  'diagnostics': { name: 'Диагностика', img: '/images/bg.jpg', price: 'от 15 000 ₽', category: 'Ремонт оборудования', description: 'Выявление неисправностей.', characteristics: { 'Срок': '1-3 дня', 'Отчет': 'Полный', 'Эксперты': 'Да' }, features: ['Диагностика', 'Отчет', 'Опыт'] },
-  'board-repair': { name: 'Ремонт плат', img: '/images/bg.jpg', price: 'от 25 000 ₽', category: 'Ремонт оборудования', description: 'Любой сложности.', characteristics: { 'Сложность': 'Любая', 'Срок': '3-10 дней', 'Гарантия': 'Да' }, features: ['Любая сложность', 'Гарантия', 'Опыт'] },
-  'component-replacement': { name: 'Замена компонентов', img: '/images/bg.jpg', price: 'по факту', category: 'Ремонт оборудования', description: 'Оригинальные запчасти.', characteristics: { 'Запчасти': 'Оригинал', 'Срок': 'По наличию', 'Гарантия': 'Да' }, features: ['Оригинал', 'Гарантия', 'Качество'] },
-  'support-24-7': { name: 'Поддержка 24/7', img: '/images/bg.jpg', price: 'от 50 000 ₽/мес', category: 'Техническая поддержка', description: 'Телефон, email.', characteristics: { 'Режим': '24/7', 'Каналы': 'Телефон, email', 'Ответ': 'Быстрый' }, features: ['Круглосуточно', 'Каналы', 'Оперативность'] },
-  'remote-help': { name: 'Удалённая помощь', img: '/images/bg.jpg', price: 'от 5 000 ₽/час', category: 'Техническая поддержка', description: 'TeamViewer, AnyDesk.', characteristics: { 'Программы': 'TeamViewer, AnyDesk', 'Срок': 'По запросу', 'Эксперты': 'Да' }, features: ['Удаленно', 'Эксперты', 'Гибкость'] },
-  'original-parts': { name: 'Оригинальные запчасти', img: '/images/bg.jpg', price: 'по запросу', category: 'Запасные части', description: 'От производителей.', characteristics: { 'Производитель': 'Оригинал', 'Гарантия': '1 год', 'Доставка': 'Мир' }, features: ['Оригинал', 'Гарантия', 'Доставка'] },
-  'consumables': { name: 'Расходные материалы', img: '/images/bg.jpg', price: 'по прайсу', category: 'Запасные части', description: 'В наличии.', characteristics: { 'Наличие': 'Да', 'Доставка': 'Быстрая', 'Цены': 'Конкурентные' }, features: ['Наличие', 'Доставка', 'Цены'] },
-  'interview': { name: 'Интервью в журнале', img: '/images/bg.jpg', price: '', category: 'Публикации в СМИ', description: 'Электронные компоненты, февраль 2025.', date: '02.2025' },
-  'article': { name: 'Статья в газете', img: '/images/bg.jpg', price: '', category: 'Публикации в СМИ', description: 'Ведомости, январь 2025.', date: '01.2025' },
-  'press-q4': { name: 'Пресс-релиз Q4 2024', img: '/images/bg.jpg', price: '', category: 'Пресс-релизы', description: 'Итоги года.', date: 'Q4 2024' },
-  'new-direction': { name: 'Новое направление', img: '/images/bg.jpg', price: '', category: 'Пресс-релизы', description: 'Запуск 3D печати.', date: '2025' },
-  'company-video': { name: 'Презентация компании', img: '/images/bg.jpg', price: '', category: 'Видео', description: '5 минут.' },
-  'equipment-review': { name: 'Обзор оборудования', img: '/images/bg.jpg', price: '', category: 'Видео', description: '15 минут.' },
-  'smt-seminar': { name: 'SMT технологии', img: '/images/bg.jpg', price: '5 000 ₽', category: 'Семинары', description: 'Обучающий семинар.', date: '1 день' },
-  'soldering-seminar': { name: 'Пайка и монтаж', img: '/images/bg.jpg', price: '8 000 ₽', category: 'Семинары', description: 'Практический курс.', date: '2 дня' },
-  'online-presentation': { name: 'Онлайн презентация', img: '/images/bg.jpg', price: 'бесплатно', category: 'Вебинары', description: 'Новое оборудование.' },
-  'qa-webinar': { name: 'Вопрос-ответ', img: '/images/bg.jpg', price: 'бесплатно', category: 'Вебинары', description: 'С экспертами.' },
-  'distributors': { name: 'Официальные дистрибьюторы', img: '/images/bg.jpg', price: '', category: 'Партнёры', description: '15 компаний.' },
-  'partners': { name: 'Сертифицированные партнёры', img: '/images/bg.jpg', price: '', category: 'Партнёры', description: '50+ компаний.' },
-  'iso-9001': { name: 'ISO 9001', img: '/images/bg.jpg', price: '', category: 'Сертификаты', description: 'Система менеджмента качества.' },
-  'iso-14001': { name: 'ISO 14001', img: '/images/bg.jpg', price: '', category: 'Сертификаты', description: 'Экологический менеджмент.' },
-  'requisites': { name: 'ООО Диполь Технологии', img: '/images/bg.jpg', price: '', category: 'Реквизиты', description: 'ИНН: 7701234567, ОГРН: 1157746123456.' },
-  'team-events': { name: 'Командные мероприятия', img: '/images/bg.jpg', price: '', category: 'Корпоративная культура', description: 'Тимбилдинги.' },
-  'sports': { name: 'Спорт и здоровье', img: '/images/bg.jpg', price: '', category: 'Корпоративная культура', description: 'Корпоративный спорт.' },
-  'review-engineer': { name: 'Отзыв инженера', img: '/images/bg.jpg', price: '', category: 'Отзывы сотрудников', description: 'Работаю 5 лет.' },
-  'review-manager': { name: 'Отзыв менеджера', img: '/images/bg.jpg', price: '', category: 'Отзывы сотрудников', description: 'Отличная компания.' },
-  'contact-form': { name: 'Форма обратной связи', img: '/images/bg.jpg', price: '', category: 'Написать нам', description: 'Заполните форму на сайте.' },
+  // === ОТРАСЛЕВЫЕ РЕШЕНИЯ ===
+  'opk-equipment': { name: 'Специализированное оборудование ОПК', slug: 'opk-equipment', category: 'Оборонно-промышленный комплекс', categorySlug: 'industries', description: 'По техническому заданию' },
+  'quality-control': { name: 'Системы контроля качества', slug: 'quality-control', category: 'Оборонно-промышленный комплекс', categorySlug: 'industries', description: 'Военная приемка' },
+  'pcb-line': { name: 'Линия сборки плат', slug: 'pcb-line', category: 'Производство электроники и ЭКБ', categorySlug: 'industries', description: 'Полный цикл производства' },
+  'ekb-equipment': { name: 'Оборудование для ЭКБ', slug: 'ekb-equipment', category: 'Производство электроники и ЭКБ', categorySlug: 'industries', description: 'Производство компонентов' },
+  'space-equipment': { name: 'Оборудование для космоса', slug: 'space-equipment', category: 'Космическая промышленность', categorySlug: 'industries', description: 'Сертифицировано' },
+  'space-vibration': { name: 'Вибростенд космический', slug: 'space-vibration', category: 'Космическая промышленность', categorySlug: 'industries', description: 'Испытания спутников' },
+  'aviation-equipment': { name: 'Оборудование для авиации', slug: 'aviation-equipment', category: 'Авиастроение', categorySlug: 'industries', description: 'Сертификат FAA' },
+  'aviation-measurement': { name: 'Контрольно-измерительное', slug: 'aviation-measurement', category: 'Авиастроение', categorySlug: 'industries', description: 'Прецизионное' },
+  'auto-electronics': { name: 'Линия сборки электроники', slug: 'auto-electronics', category: 'Автомобилестроение', categorySlug: 'industries', description: 'Для автоэлектроники' },
+  'auto-tester': { name: 'Тестер автомобильный', slug: 'auto-tester', category: 'Автомобилестроение', categorySlug: 'industries', description: 'Диагностика' },
+  'energy-equipment': { name: 'Оборудование для энергетики', slug: 'energy-equipment', category: 'Энергетика', categorySlug: 'industries', description: 'Высоковольтное' },
+  'power-analyzer': { name: 'Анализатор качества энергии', slug: 'power-analyzer', category: 'Энергетика', categorySlug: 'industries', description: 'Класс A' },
+  'fiber-tester': { name: 'Тестер оптоволокна', slug: 'fiber-tester', category: 'Телекоммуникации и связь', categorySlug: 'industries', description: 'OTDR' },
+  'network-analyzer': { name: 'Анализатор сетей', slug: 'network-analyzer', category: 'Телекоммуникации и связь', categorySlug: 'industries', description: '5G ready' },
+  'measurement-complex': { name: 'Измерительные комплексы', slug: 'measurement-complex', category: 'Радиоэлектронная промышленность', categorySlug: 'industries', description: 'Для РЭП' },
+  'test-stands': { name: 'Стенды испытаний', slug: 'test-stands', category: 'Радиоэлектронная промышленность', categorySlug: 'industries', description: 'Комплексные' },
+  'university-equipment': { name: 'Оборудование для ВУЗов', slug: 'university-equipment', category: 'Наука и образование', categorySlug: 'industries', description: 'Учебные комплексы' },
+  'lab-stands': { name: 'Лабораторные стенды', slug: 'lab-stands', category: 'Наука и образование', categorySlug: 'industries', description: 'Для исследований' },
+  'railway-systems': { name: 'Системы для ЖД', slug: 'railway-systems', category: 'Транспортная инфраструктура', categorySlug: 'industries', description: 'Железнодорожная автоматика' },
+  'metro-equipment': { name: 'Метро оборудование', slug: 'metro-equipment', category: 'Транспортная инфраструктура', categorySlug: 'industries', description: 'Системы управления' },
 };
 
 export default function ProductPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const productId = params.id as string;
-  const product = productsData[productId];
+  const product = productsDatabase[productId];
 
-  // Получаем параметр 'from' из URL
-  const fromCategorySlug = searchParams.get('from');
-
+  // ✅ ИСПРАВЛЕНО: Возвращаем параметр ?sub= для сохранения вкладки
   const handleBack = () => {
-    if (fromCategorySlug) {
-      // Переходим в категорию с параметром sub, чтобы открыть нужную подкатегорию
-      router.push(`/category/${fromCategorySlug}?sub=${encodeURIComponent(product.category)}`);
+    if (product?.categorySlug && product?.category) {
+      router.push(`/category/${product.categorySlug}?sub=${encodeURIComponent(product.category)}`);
     } else {
       router.back();
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert('Спасибо! Мы свяжемся с вами в ближайшее время.');
-    setIsModalOpen(false);
-  };
-
   if (!product) {
     return (
       <>
-        <Header onContactClick={() => setIsModalOpen(true)} />
+        <Header />
         <main className="min-h-screen bg-gray-50 flex flex-col">
           <div className="flex-1 flex items-center justify-center px-4 py-20">
             <div className="text-center max-w-lg">
@@ -311,10 +238,10 @@ export default function ProductPage() {
               </button>
             </div>
           </div>
-          <footer className="bg-gray-950 text-white py-16">
+          <footer className="bg-black text-white py-16">
             <div className="container">
               <div className="text-center text-gray-500 text-sm">
-                <p>&copy; 2024 ООО «Диполь Технологии». Все права защищены.</p>
+                <p>&copy; 2024 Технопарк ГУАП. Все права защищены.</p>
               </div>
             </div>
           </footer>
@@ -323,124 +250,49 @@ export default function ProductPage() {
     );
   }
 
-  // Проверяем, нужно ли показывать характеристики и преимущества
-  const showSpecs = !simpleContentCategories.includes(product.category);
-
   return (
     <>
-      <Header onContactClick={() => setIsModalOpen(true)} />
+      <Header />
       <main className="min-h-screen bg-gray-50">
-      {/* Хлебные крошки - КЛИКАБЕЛЬНЫЕ */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container py-4">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-blue-700 transition-colors">
-              Главная
-            </Link>
-            <span>/</span>
-            <Link
-              href={`/category/${getCategorySlug(product.category)}?sub=${encodeURIComponent(product.category)}`}
-              className="hover:text-blue-700 transition-colors"
-            >
-              {product.category}
-            </Link>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">{product.name}</span>
+        {/* ✅ ИСПРАВЛЕНО: Хлебные крошки с параметром ?sub= */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="container py-4">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <button onClick={handleBack} className="hover:text-blue-700 transition-colors">
+                Меню
+              </button>
+              <span>/</span>
+              <Link
+                href={`/category/${product.categorySlug}?sub=${encodeURIComponent(product.category)}`}
+                className="hover:text-blue-700 transition-colors"
+              >
+                {product.category}
+              </Link>
+              <span>/</span>
+              <span className="text-gray-900 font-medium">{product.name}</span>
+            </div>
           </div>
         </div>
-      </div>
 
         <section className="py-12">
           <div className="container">
             <div className="grid lg:grid-cols-2 gap-12 mb-12">
-              <div className="bg-white rounded-sm p-8">
+              <div className="bg-white rounded-sm p-8 shadow-sm">
                 <div className="aspect-square bg-gray-100 rounded-sm overflow-hidden">
-                  <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+                  <img src="/images/bg.jpg" alt={product.name} className="w-full h-full object-cover" />
                 </div>
               </div>
 
               <div>
                 <div className="text-sm text-blue-700 font-medium mb-2">{product.category}</div>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
-                {product.price && <div className="text-3xl font-bold text-blue-700 mb-6">{product.price}</div>}
+                {product.salary && <div className="text-3xl font-bold text-blue-700 mb-6">{product.salary}</div>}
+                {!product.salary && <div className="text-gray-400 text-lg mb-6 italic">Подробности по запросу</div>}
+
                 <p className="text-gray-600 text-lg leading-relaxed mb-8">{product.description}</p>
 
-                {/* Контактная информация для менеджеров и контактов */}
-                {(product.phone || product.email || product.address) && (
-                  <div className="bg-gray-50 rounded-sm p-6 mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Контактная информация</h3>
-                    <div className="space-y-3">
-                      {product.phone && (
-                        <div className="flex items-center gap-3">
-                          <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          <a href={`tel:${product.phone}`} className="text-gray-700 hover:text-blue-700">{product.phone}</a>
-                        </div>
-                      )}
-                      {product.email && (
-                        <div className="flex items-center gap-3">
-                          <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          <a href={`mailto:${product.email}`} className="text-gray-700 hover:text-blue-700">{product.email}</a>
-                        </div>
-                      )}
-                      {product.address && (
-                        <div className="flex items-start gap-3">
-                          <svg className="w-5 h-5 text-blue-700 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span className="text-gray-700">{product.address}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Дополнительная информация для вакансий */}
-                {(product.experience || product.location) && (
-                  <div className="bg-gray-50 rounded-sm p-6 mb-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Требования</h3>
-                    <div className="space-y-2">
-                      {product.experience && (
-                        <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="text-gray-700">Опыт: {product.experience}</span>
-                        </div>
-                      )}
-                      {product.location && (
-                        <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          </svg>
-                          <span className="text-gray-700">Локация: {product.location}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Информация о дате для новостей и мероприятий */}
-                {product.date && (
-                  <div className="bg-blue-50 rounded-sm p-4 mb-8">
-                    <div className="flex items-center gap-2 text-blue-900">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span className="font-medium">{product.date}</span>
-                    </div>
-                  </div>
-                )}
-
                 <div className="flex gap-4 mb-8">
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-8 py-4 transition-all inline-flex items-center gap-2"
-                  >
+                  <button className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-8 py-4 transition-all inline-flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -453,120 +305,19 @@ export default function ProductPage() {
                     Назад
                   </button>
                 </div>
-
-                {/* Преимущества (только для товаров) */}
-                {showSpecs && product.features && product.features.length > 0 && (
-                  <div className="border-t border-gray-200 pt-8">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Преимущества</h3>
-                    <ul className="space-y-2">
-                      {product.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
-
-            {/* Характеристики (только для товаров) */}
-            {showSpecs && product.characteristics && Object.keys(product.characteristics).length > 0 && (
-              <div className="bg-white rounded-sm p-8 mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Технические характеристики</h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {Object.entries(product.characteristics).map(([key, value]) => (
-                    <div key={key} className="flex border-b border-gray-200 pb-3">
-                      <div className="w-1/2 text-gray-500 font-medium">{key}</div>
-                      <div className="w-1/2 text-gray-900">{value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </section>
 
-        {/* === ПОЛНЫЙ ФУТЕР (как на главной) === */}
-        <footer className="bg-gray-950 text-white py-16">
+        <footer className="bg-black text-white py-16">
           <div className="container">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-              {/* Логотип и контакты */}
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-blue-700 rounded-sm flex items-center justify-center text-white font-bold text-xl">Д</div>
-                  <div>
-                    <div className="text-2xl font-bold">ДИПОЛЬ</div>
-                    <div className="text-xs text-gray-400">ТЕХНОЛОГИИ</div>
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm mb-6">Технологическая поддержка предприятий радиоэлектронной промышленности</p>
-                <div className="space-y-3">
-                  <a href="tel:88005553535" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">8 (800) 555-35-35</a>
-                  <a href="mailto:info@dipaul.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">info@dipaul.ru</a>
-                  <p className="text-sm text-gray-400">Пн-Пт: 9:00 - 18:00</p>
-                </div>
-              </div>
-              {/* Разделы */}
-              <div>
-                <h4 className="font-semibold mb-6 text-white text-lg">Разделы</h4>
-                <ul className="space-y-3">
-                  <li><Link href="/category/equipment" className="text-gray-400 hover:text-blue-400 transition-colors">Оборудование</Link></li>
-                  <li><Link href="/category/industries" className="text-gray-400 hover:text-blue-400 transition-colors">Отраслевые решения</Link></li>
-                  <li><Link href="/category/services" className="text-gray-400 hover:text-blue-400 transition-colors">Услуги</Link></li>
-                  <li><Link href="/category/service" className="text-gray-400 hover:text-blue-400 transition-colors">Сервис</Link></li>
-                </ul>
-              </div>
-              {/* Компания */}
-              <div>
-                <h4 className="font-semibold mb-6 text-white text-lg">Компания</h4>
-                <ul className="space-y-3">
-                  <li><Link href="/category/about" className="text-gray-400 hover:text-blue-400 transition-colors">О компании</Link></li>
-                  <li><Link href="/category/press" className="text-gray-400 hover:text-blue-400 transition-colors">Пресс-центр</Link></li>
-                  <li><Link href="/category/events" className="text-gray-400 hover:text-blue-400 transition-colors">Мероприятия</Link></li>
-                  <li><button onClick={() => setIsModalOpen(true)} className="text-gray-400 hover:text-blue-400 transition-colors">Контакты</button></li>
-                </ul>
-              </div>
-            </div>
-            {/* Нижняя часть футера */}
-            <div className="border-t border-gray-800 pt-8">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="text-gray-500 text-sm text-center md:text-left"><p>&copy; 2024 ООО «Диполь Технологии». Все права защищены.</p></div>
-                <div className="flex flex-wrap justify-center gap-6 text-sm">
-                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Политика конфиденциальности</Link>
-                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Пользовательское соглашение</Link>
-                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Карта сайта</Link>
-                </div>
-              </div>
+            <div className="text-center text-gray-500 text-sm">
+              <p>&copy; 2024 Технопарк ГУАП. Все права защищены.</p>
             </div>
           </div>
         </footer>
       </main>
-
-      {/* === МОДАЛЬНОЕ ОКНО (встроено) === */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="relative bg-gray-900 rounded-sm p-8 max-w-md w-full border border-gray-800 shadow-2xl">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <h2 className="text-2xl font-bold text-white mb-2">Остались вопросы?</h2>
-            <p className="text-gray-400 mb-6">Оставьте заявку, и мы свяжемся с вами</p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" placeholder="Ваше имя" required className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
-              <input type="tel" placeholder="Телефон" required className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
-              <input type="email" placeholder="Email" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
-              <button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-6 py-3 transition-all duration-200 hover:shadow-lg">Отправить заявку</button>
-            </form>
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -21,14 +21,13 @@ export default function Header({ onContactClick }: HeaderProps) {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
                 </svg>
-                8 (800) 555-35-35
+                8 (981) 170-32-15
               </a>
               <span className="hidden lg:inline text-gray-500">|</span>
               <button onClick={onContactClick} className="hidden lg:block hover:text-gray-300 transition-colors">
                 Связаться с нами
               </button>
             </div>
-          
           </div>
         </div>
       </div>
@@ -36,14 +35,27 @@ export default function Header({ onContactClick }: HeaderProps) {
       {/* Основное меню */}
       <div className="container">
         <div className="flex items-center justify-between py-5">
-          {/* Логотип */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-14 h-14 bg-blue-700 rounded-sm flex items-center justify-center text-white font-bold text-2xl">Д</div>
-            <div>
-              <div className="text-3xl font-bold text-gray-900 tracking-tight">ДИПОЛЬ</div>
-              <div className="text-xs text-gray-500 tracking-widest uppercase">Технологии</div>
+
+          {/* === ИСПРАВЛЕННЫЙ ЛОГОТИП === */}
+          <Link href="/" className="flex items-center gap-3 group">
+            {/* Картинка логотипа */}
+            <img
+              src="/images/logo.png"
+              alt="Технопарк ГУАП"
+              className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+            />
+
+            {/* Текстовое название с градиентом */}
+            <div className="flex flex-col leading-tight">
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent tracking-wide">
+                ТЕХНОПАРК
+              </span>
+              <span className="text-xs font-semibold bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent tracking-widest uppercase">
+                ГУАП
+              </span>
             </div>
           </Link>
+          {/* ========================== */}
 
           {/* Десктопное меню */}
           <nav className="hidden xl:flex items-center gap-6">
@@ -88,7 +100,7 @@ export default function Header({ onContactClick }: HeaderProps) {
               <Link href="/category/industries" className="text-gray-700 hover:text-blue-700 transition-colors font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Отраслевые решения</Link>
               <Link href="/category/services" className="text-gray-700 hover:text-blue-700 transition-colors font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Услуги</Link>
               <Link href="/category/service" className="text-gray-700 hover:text-blue-700 transition-colors font-medium py-2" onClick={() => setMobileMenuOpen(false)}>Сервис</Link>
-              <div className="pt-4 border-t border-gray-200 flex flex-col gap-3">
+              <div className="flex flex-col leading-tight">
                 <Link href="/menu" className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-6 py-3 text-center transition-colors" onClick={() => setMobileMenuOpen(false)}>Меню</Link>
                 <button onClick={() => { onContactClick?.(); setMobileMenuOpen(false); }} className="border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium rounded-sm px-6 py-3 text-center transition-colors">
                   Связаться с нами

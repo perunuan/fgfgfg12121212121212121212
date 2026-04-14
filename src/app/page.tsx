@@ -13,6 +13,8 @@ export default function Home() {
     setIsModalOpen(false);
   };
 
+  const blueBtnClass = "bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block shadow-lg hover:shadow-xl transform hover:-translate-y-0.5";
+
   return (
     <>
       <Header onContactClick={() => setIsModalOpen(true)} />
@@ -21,24 +23,16 @@ export default function Home() {
         <section id="hero" className="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img src="/images/bg.jpg" alt="Производство" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gray-900/70"></div>
+            <div className="absolute inset-0 bg-gray-900/80"></div>
           </div>
           <div className="container relative z-10 py-24 lg:py-32">
-            <div className="max-w-4xl">
-              <h1 className="mb-6 text-white leading-tight">
-                Модернизация и технологическая поддержка предприятий радиоэлектронной промышленности
+            <div className="max-w-5xl">
+              <h1 className="mb-8 text-white leading-tight text-3xl md:text-4xl lg:text-5xl font-bold">
+                Максимального результата возможно добиться только в тесном взаимодействии университета с партнерами. Это позволяет компаниям укреплять имидж в университетской среде, а университету готовить востребованных экономикой специалистов по таким направлениям, как реверсивный инжиниринг и управление, информационные технологии, инженерные, коллоборативная робототехника и математика.
               </h1>
-              <p className="text-xl mb-10 text-gray-300 max-w-3xl leading-relaxed">
-                Полный цикл решений: от поставки оборудования до сервисного обслуживания и обучения персонала
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/category/equipment" className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block">
-                  Смотреть решения
-                </Link>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="border-2 border-white text-white hover:bg-white/10 font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block"
-                >
+              <div className="flex flex-wrap gap-4 mt-10">
+                <Link href="/category/equipment" className={blueBtnClass}>Смотреть решения</Link>
+                <button onClick={() => setIsModalOpen(true)} className="border-2 border-white text-white hover:bg-white/10 font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block">
                   Связаться с нами
                 </button>
               </div>
@@ -54,19 +48,19 @@ export default function Home() {
             {/* Верхний ряд */}
             <div className="flex gap-1 mb-1">
               {[
-                { num: '01', title: 'Оборонно-промышленный комплекс', hash: '#defense' },
-                { num: '02', title: 'Производство электроники и ЭКБ', hash: '#electronics' },
-                { num: '03', title: 'Космическая промышленность', hash: '#space' },
-                { num: '04', title: 'Телекоммуникации и связь', hash: '#telecom' },
-                { num: '05', title: 'Радиоэлектронная промышленность', hash: '#radio' },
+                { num: '01', title: 'Оборонно-промышленный комплекс', img: '/images/defense.jpg' },
+                { num: '02', title: 'Производство электроники и ЭКБ', img: '/images/electronics.jpg' },
+                { num: '03', title: 'Космическая промышленность', img: '/images/space.jpg' },
+                { num: '04', title: 'Телекоммуникации и связь', img: '/images/telecom.jpg' },
+                { num: '05', title: 'Радиоэлектронная промышленность', img: '/images/radio.jpg' },
               ].map((industry) => (
                 <Link
                   key={industry.num}
-                  href={`/category/industries${industry.hash}`}
+                  href={`/category/industries?sub=${encodeURIComponent(industry.title)}`}
                   className="group relative overflow-hidden cursor-pointer flex-1 min-w-[120px] hover:flex-[2] transition-all duration-500 ease-out border border-gray-900 hover:border-blue-500/50"
                   style={{ minHeight: '320px' }}
                 >
-                  <img src="/images/bg.jpg" alt={industry.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150" />
+                  <img src={industry.img} alt={industry.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150" />
                   <div className="absolute inset-0 bg-gradient-to-b from-gray-900/75 via-gray-900/55 to-gray-900/75 group-hover:from-gray-900/50 group-hover:via-gray-900/30 group-hover:to-gray-900/50 transition-all duration-500"></div>
                   <div className="relative z-10 p-5 lg:p-6 h-full flex flex-col justify-between">
                     <div className="pt-2"><h3 className="text-white font-medium text-sm lg:text-base leading-snug line-clamp-2">{industry.title}</h3></div>
@@ -84,19 +78,19 @@ export default function Home() {
             {/* Нижний ряд */}
             <div className="flex gap-1">
               {[
-                { num: '06', title: 'Автомобилестроение', hash: '#auto' },
-                { num: '07', title: 'Авиастроение', hash: '#aviation' },
-                { num: '08', title: 'Энергетика', hash: '#energy' },
-                { num: '09', title: 'Наука и образование', hash: '#science' },
-                { num: '10', title: 'Транспортная инфраструктура', hash: '#transport' },
+                { num: '06', title: 'Автомобилестроение', img: '/images/auto.jpg' },
+                { num: '07', title: 'Авиастроение', img: '/images/aviation.jpg' },
+                { num: '08', title: 'Энергетика', img: '/images/energy.jpg' },
+                { num: '09', title: 'Наука и образование', img: '/images/science.jpg' },
+                { num: '10', title: 'Транспортная инфраструктура', img: '/images/transport.jpg' },
               ].map((industry) => (
                 <Link
                   key={industry.num}
-                  href={`/category/industries${industry.hash}`}
+                  href={`/category/industries?sub=${encodeURIComponent(industry.title)}`}
                   className="group relative overflow-hidden cursor-pointer flex-1 min-w-[120px] hover:flex-[2] transition-all duration-500 ease-out border border-gray-900 hover:border-blue-500/50"
                   style={{ minHeight: '320px' }}
                 >
-                  <img src="/images/bg.jpg" alt={industry.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150" />
+                  <img src={industry.img} alt={industry.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-150" />
                   <div className="absolute inset-0 bg-gradient-to-b from-gray-900/75 via-gray-900/55 to-gray-900/75 group-hover:from-gray-900/50 group-hover:via-gray-900/30 group-hover:to-gray-900/50 transition-all duration-500"></div>
                   <div className="relative z-10 p-5 lg:p-6 h-full flex flex-col justify-between">
                     <div className="pt-2"><h3 className="text-white font-medium text-sm lg:text-base leading-snug line-clamp-2">{industry.title}</h3></div>
@@ -112,7 +106,7 @@ export default function Home() {
             </div>
 
             <div className="text-center mt-12">
-              <Link href="/category/industries" className="border-2 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-blue-400 font-medium rounded-sm px-8 py-3 transition-all duration-300 inline-block">Все отрасли →</Link>
+              <Link href="/category/industries" className={blueBtnClass}>Все отрасли →</Link>
             </div>
           </div>
         </section>
@@ -137,11 +131,11 @@ export default function Home() {
           </svg>
         </section>
 
-        {/* Сделано в Диполе */}
+        {/* Сделано в Технопарке */}
         <section id="products" className="py-20 lg:py-28 bg-white">
           <div className="container">
             <div className="flex justify-between items-center mb-12">
-              <h2 className="text-5xl lg:text-6xl font-light"><span className="text-gray-900">Сделано</span> <span className="text-gray-400">в Диполе</span></h2>
+              <h2 className="text-5xl lg:text-6xl font-light"><span className="text-gray-900">Сделано</span> <span className="text-gray-400">в Технопарке</span></h2>
               <Link href="/category/equipment" className="border border-gray-300 text-gray-700 hover:border-gray-900 hover:text-gray-900 font-medium rounded-sm px-6 py-3 text-sm transition-all duration-200 hidden md:inline-flex items-center gap-2">Все решения
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
@@ -199,32 +193,26 @@ export default function Home() {
             <div className="max-w-3xl">
               <h2 className="text-3xl font-bold mb-6 text-white">Остались вопросы?</h2>
               <p className="text-xl mb-8 text-gray-400">Свяжитесь с нами, и наши специалисты помогут подобрать оптимальное решение</p>
-              <button onClick={() => setIsModalOpen(true)} className="bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-10 py-4 transition-all duration-200 inline-block">Связаться с нами</button>
+              <button onClick={() => setIsModalOpen(true)} className={blueBtnClass}>Связаться с нами</button>
             </div>
           </div>
         </section>
 
-        {/* Footer - БЕЗ ФОРМЫ */}
-        <footer className="bg-gray-950 text-white py-16">
+        {/* Footer */}
+        <footer className="bg-black text-white py-16">
           <div className="container">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-              {/* Логотип и контакты */}
               <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-blue-700 rounded-sm flex items-center justify-center text-white font-bold text-xl">Д</div>
-                  <div>
-                    <div className="text-2xl font-bold">ДИПОЛЬ</div>
-                    <div className="text-xs text-gray-400">ТЕХНОЛОГИИ</div>
-                  </div>
+                <div className="mb-6">
+                  <img src="/images/logo2.png" alt="Технопарк ГУАП" className="h-14 w-auto object-contain" />
                 </div>
-                <p className="text-gray-400 text-sm mb-6">Технологическая поддержка предприятий радиоэлектронной промышленности</p>
+                <p className="text-gray-400 text-sm mb-6">Инновационная площадка для развития технологий</p>
                 <div className="space-y-3">
-                  <a href="tel:88005553535" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">8 (800) 555-35-35</a>
-                  <a href="mailto:info@dipaul.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">info@dipaul.ru</a>
+                  <a href="tel:89811703215" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">8 (981) 170-32-15</a>
+                  <a href="mailto:info@technopark.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">info@technopark.ru</a>
                   <p className="text-sm text-gray-400">Пн-Пт: 9:00 - 18:00</p>
                 </div>
               </div>
-              {/* Разделы */}
               <div>
                 <h4 className="font-semibold mb-6 text-white text-lg">Разделы</h4>
                 <ul className="space-y-3">
@@ -234,7 +222,6 @@ export default function Home() {
                   <li><Link href="/category/service" className="text-gray-400 hover:text-blue-400 transition-colors">Сервис</Link></li>
                 </ul>
               </div>
-              {/* Компания */}
               <div>
                 <h4 className="font-semibold mb-6 text-white text-lg">Компания</h4>
                 <ul className="space-y-3">
@@ -245,10 +232,9 @@ export default function Home() {
                 </ul>
               </div>
             </div>
-            {/* Нижняя часть футера */}
             <div className="border-t border-gray-800 pt-8">
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="text-gray-500 text-sm text-center md:text-left"><p>&copy; 2024 ООО «Диполь Технологии». Все права защищены.</p></div>
+                <div className="text-gray-500 text-sm text-center md:text-left"><p>&copy; 2024 Технопарк ГУАП. Все права защищены.</p></div>
                 <div className="flex flex-wrap justify-center gap-6 text-sm">
                   <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Политика конфиденциальности</Link>
                   <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Пользовательское соглашение</Link>
@@ -260,22 +246,51 @@ export default function Home() {
         </footer>
       </main>
 
-      {/* === МОДАЛЬНОЕ ОКНО === */}
+      {/* Модальное окно */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="relative bg-gray-900 rounded-sm p-8 max-w-md w-full border border-gray-800 shadow-2xl">
+          <div className="relative bg-gray-900 rounded-sm p-8 max-w-lg w-full border border-gray-800 shadow-2xl overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setIsModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <h2 className="text-2xl font-bold text-white mb-2">Остались вопросы?</h2>
-            <p className="text-gray-400 mb-6">Оставьте заявку, и мы свяжемся с вами</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Оставить заявку</h2>
+            <p className="text-gray-400 mb-6">Заполните форму, и мы свяжемся с вами в течение 2 часов</p>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" placeholder="Ваше имя" required className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
-              <input type="tel" placeholder="Телефон" required className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
-              <input type="email" placeholder="Email" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Имя *</label>
+                  <input type="text" required placeholder="Иван Иванов" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Компания *</label>
+                  <input type="text" required placeholder="ООО Пример" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Должность</label>
+                  <input type="text" placeholder="Главный инженер" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">ИНН</label>
+                  <input type="text" placeholder="1234567890" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Телефон *</label>
+                  <input type="tel" required placeholder="+7 (999) 123-45-67" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">Email *</label>
+                  <input type="email" required placeholder="email@company.ru" className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">Сообщение / Задача</label>
+                <textarea rows={3} placeholder="Опишите вашу задачу или вопрос..." className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-700 transition-colors resize-none" />
+              </div>
               <button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-sm px-6 py-3 transition-all duration-200 hover:shadow-lg">Отправить заявку</button>
             </form>
           </div>

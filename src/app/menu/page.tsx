@@ -9,24 +9,19 @@ export default function MenuPage() {
 
   const menuItems = [
     {
-      name: 'Оборудование',
-      slug: 'equipment',
+      name: 'Коллаборативная робототехника',
+      slug: 'collaborative-robots',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
       subcategories: [
-        { name: 'Производство электроники', img: '/images/bg.jpg' },
-        { name: 'Производство микроэлектроники', img: '/images/bg.jpg' },
-        { name: 'Измерения', img: '/images/bg.jpg' },
-        { name: 'Испытательное оборудование', img: '/images/bg.jpg' },
-        { name: 'Метрология и поверка', img: '/images/bg.jpg' },
-        { name: '3D-принтеры', img: '/images/bg.jpg' },
-        { name: 'Ручная пайка и визуальный контроль', img: '/images/bg.jpg' },
-        { name: 'Программное обеспечение', img: '/images/bg.jpg' },
-        { name: 'Инженерная инфраструктура', img: '/images/bg.jpg' },
-        { name: 'Оснащение производственных помещений', img: '/images/bg.jpg' },
+        { name: 'Коботы Universal Robots', img: '/images/bg.jpg' },
+        { name: 'Системы безопасности', img: '/images/bg.jpg' },
+        { name: 'Программирование и обучение', img: '/images/bg.jpg' },
+        { name: 'Интеграция в линии', img: '/images/bg.jpg' },
+        { name: 'Эффекторы и захваты', img: '/images/bg.jpg' },
       ]
     },
     {
@@ -49,25 +44,24 @@ export default function MenuPage() {
       ]
     },
     {
-      name: 'Услуги',
-      slug: 'services',
+      name: 'Мобильная робототехника',
+      slug: 'mobile-robots',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       ),
       subcategories: [
-        { name: 'Техническое перевооружение', img: '/images/bg.jpg' },
-        { name: 'Инжиниринг', img: '/images/bg.jpg' },
-        { name: 'Аудит и консалтинг', img: '/images/bg.jpg' },
-        { name: 'Поставка оборудования', img: '/images/bg.jpg' },
-        { name: 'Монтаж и пусконаладка', img: '/images/bg.jpg' },
-        { name: 'Обучение персонала', img: '/images/bg.jpg' },
+        { name: 'AGV и AMR платформы', img: '/images/bg.jpg' },
+        { name: 'Инспекционные дроны', img: '/images/bg.jpg' },
+        { name: 'Логистические роботы', img: '/images/bg.jpg' },
+        { name: 'Навигация и LiDAR', img: '/images/bg.jpg' },
+        { name: 'Зарядные станции', img: '/images/bg.jpg' },
       ]
     },
     {
-      name: 'Сервис',
-      slug: 'service',
+      name: 'Мехатроника',
+      slug: 'mechatronics',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -75,26 +69,43 @@ export default function MenuPage() {
         </svg>
       ),
       subcategories: [
-        { name: 'Гарантийное обслуживание', img: '/images/bg.jpg' },
-        { name: 'Постгарантийное обслуживание', img: '/images/bg.jpg' },
-        { name: 'Ремонт оборудования', img: '/images/bg.jpg' },
-        { name: 'Техническая поддержка', img: '/images/bg.jpg' },
-        { name: 'Запасные части', img: '/images/bg.jpg' },
+        { name: 'Сервоприводы и моторы', img: '/images/bg.jpg' },
+        { name: 'Контроллеры движения', img: '/images/bg.jpg' },
+        { name: 'Датчики и энкодеры', img: '/images/bg.jpg' },
+        { name: 'Пневмо- и гидроцилиндры', img: '/images/bg.jpg' },
+        { name: 'Сборочные модули', img: '/images/bg.jpg' },
       ]
     },
     {
-      name: 'Пресс-центр',
-      slug: 'press',
+      name: 'Промышленная автоматизация',
+      slug: 'automation',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
         </svg>
       ),
       subcategories: [
-        { name: 'Новости компании', img: '/images/bg.jpg' },
-        { name: 'Публикации в СМИ', img: '/images/bg.jpg' },
-        { name: 'Пресс-релизы', img: '/images/bg.jpg' },
-        { name: 'Видео', img: '/images/bg.jpg' },
+        { name: 'ПЛК и модули ввода-вывода', img: '/images/bg.jpg' },
+        { name: 'SCADA-системы', img: '/images/bg.jpg' },
+        { name: 'Промышленный IoT', img: '/images/bg.jpg' },
+        { name: 'Шкафы управления', img: '/images/bg.jpg' },
+        { name: 'Частотные преобразователи', img: '/images/bg.jpg' },
+      ]
+    },
+    {
+      name: 'Цифровые двойники производств',
+      slug: 'digital-twins',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+        </svg>
+      ),
+      subcategories: [
+        { name: '3D-моделирование процессов', img: '/images/bg.jpg' },
+        { name: 'Предиктивная аналитика', img: '/images/bg.jpg' },
+        { name: 'Оптимизация циклов', img: '/images/bg.jpg' },
+        { name: 'VR/AR обучение', img: '/images/bg.jpg' },
+        { name: 'Цифровые нити', img: '/images/bg.jpg' },
       ]
     },
     {
@@ -106,14 +117,14 @@ export default function MenuPage() {
         </svg>
       ),
       subcategories: [
-        { name: 'Выставки', img: '/images/bg.jpg' },
-        { name: 'Конференции', img: '/images/bg.jpg' },
-        { name: 'Семинары', img: '/images/bg.jpg' },
-        { name: 'Вебинары', img: '/images/bg.jpg' },
+        { name: 'Выставка Robotica 2025', img: '/images/bg.jpg' },
+        { name: 'Форум Industry 4.0', img: '/images/bg.jpg' },
+        { name: 'Семинар по коботам', img: '/images/bg.jpg' },
+        { name: 'Онлайн-трансляции', img: '/images/bg.jpg' },
       ]
     },
     {
-      name: 'О компании',
+      name: 'О Технопарке',
       slug: 'about',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,15 +132,15 @@ export default function MenuPage() {
         </svg>
       ),
       subcategories: [
-        { name: 'История компании', img: '/images/bg.jpg' },
+        { name: 'История и миссия', img: '/images/bg.jpg' },
         { name: 'Руководство', img: '/images/bg.jpg' },
-        { name: 'Партнёры', img: '/images/bg.jpg' },
+        { name: 'Партнёры и клиенты', img: '/images/bg.jpg' },
         { name: 'Сертификаты', img: '/images/bg.jpg' },
-        { name: 'Реквизиты', img: '/images/bg.jpg' },
+        { name: 'Контакты и адрес', img: '/images/bg.jpg' },
       ]
     },
     {
-      name: 'Работа в Диполе',
+      name: 'Карьера в Технопарке',
       slug: 'careers',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,25 +148,27 @@ export default function MenuPage() {
         </svg>
       ),
       subcategories: [
-        { name: 'Вакансии', img: '/images/bg.jpg' },
-        { name: 'Стажировки', img: '/images/bg.jpg' },
+        { name: 'Инженер-робототехник', img: '/images/bg.jpg' },
+        { name: 'Специалист по автоматизации', img: '/images/bg.jpg' },
+        { name: 'Менеджер проектов', img: '/images/bg.jpg' },
+        { name: 'Стажировки для студентов', img: '/images/bg.jpg' },
         { name: 'Корпоративная культура', img: '/images/bg.jpg' },
-        { name: 'Отзывы сотрудников', img: '/images/bg.jpg' },
       ]
     },
     {
-      name: 'Контакты',
-      slug: 'contacts',
+      name: 'Поддержка и связь',
+      slug: 'support',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
       ),
       subcategories: [
-        { name: 'Офисы и представительства', img: '/images/bg.jpg' },
-        { name: 'Отдел продаж', img: '/images/bg.jpg' },
-        { name: 'Сервисный центр', img: '/images/bg.jpg' },
-        { name: 'Написать нам', img: '/images/bg.jpg' },
+        { name: 'Гарантийное обслуживание', img: '/images/bg.jpg' },
+        { name: 'Техническая поддержка 24/7', img: '/images/bg.jpg' },
+        { name: 'Ремонт и диагностика', img: '/images/bg.jpg' },
+        { name: 'Запасные части', img: '/images/bg.jpg' },
+        { name: 'Форма обратной связи', img: '/images/bg.jpg' },
       ]
     },
   ];
@@ -164,23 +177,16 @@ export default function MenuPage() {
     <>
       <Header />
       <main className="min-h-screen bg-gray-50">
-        {/* Заголовок страницы */}
         <section className="bg-white border-b border-gray-200">
           <div className="container py-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Каталог
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Выберите категорию оборудования или услуг
-            </p>
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Каталог решений</h1>
+            <p className="text-gray-600 text-lg">Выберите категорию оборудования, услуг или направление</p>
           </div>
         </section>
 
-        {/* Основное содержимое меню */}
         <section className="py-12">
           <div className="container">
             <div className="flex flex-col lg:flex-row gap-8">
-              {/* Левая колонка - основные категории */}
               <div className="lg:w-80 flex-shrink-0">
                 <div className="bg-white border border-gray-200 rounded-sm overflow-hidden sticky top-24">
                   {menuItems.map((item, index) => (
@@ -193,9 +199,7 @@ export default function MenuPage() {
                           : 'text-gray-700 hover:bg-gray-50 border-l-4 border-l-transparent'
                       }`}
                     >
-                      <span className={activeCategory === index ? 'text-blue-700' : 'text-gray-400'}>
-                        {item.icon}
-                      </span>
+                      <span className={activeCategory === index ? 'text-blue-700' : 'text-gray-400'}>{item.icon}</span>
                       <span className="font-medium">{item.name}</span>
                       <svg className="w-4 h-4 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -205,7 +209,6 @@ export default function MenuPage() {
                 </div>
               </div>
 
-              {/* Правая колонка - подразделы */}
               <div className="flex-1">
                 <div className="bg-white border border-gray-200 rounded-sm p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200">
@@ -215,23 +218,13 @@ export default function MenuPage() {
                     {menuItems[activeCategory]?.subcategories.map((sub) => (
                       <Link
                         key={sub.name}
-                        href={`/category/${menuItems[activeCategory].slug}`}
+                        href={`/category/${menuItems[activeCategory].slug}?sub=${encodeURIComponent(sub.name)}`}
                         className="flex items-center gap-4 p-4 rounded-sm border border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all group"
-                        onClick={() => {
-                          // При клике запоминаем выбранную категорию
-                          localStorage.setItem('lastCategory', menuItems[activeCategory].slug);
-                        }}
                       >
                         <div className="w-20 h-14 bg-gray-200 rounded-sm overflow-hidden flex-shrink-0">
-                          <img
-                            src={sub.img}
-                            alt={sub.name}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
+                          <img src={sub.img} alt={sub.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                         </div>
-                        <span className="text-gray-700 font-medium group-hover:text-blue-700 transition-colors">
-                          {sub.name}
-                        </span>
+                        <span className="text-gray-700 font-medium group-hover:text-blue-700 transition-colors">{sub.name}</span>
                       </Link>
                     ))}
                   </div>
@@ -240,6 +233,53 @@ export default function MenuPage() {
             </div>
           </div>
         </section>
+
+        {/* Footer */}
+        <footer className="bg-black text-white py-16">
+          <div className="container">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
+              <div>
+                <div className="mb-6">
+                  <img src="/images/logo2.png" alt="Технопарк ГУАП" className="h-14 w-auto object-contain" />
+                </div>
+                <p className="text-gray-400 text-sm mb-6">Инновационная площадка для развития технологий</p>
+                <div className="space-y-3">
+                  <a href="tel:89811703215" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">8 (981) 170-32-15</a>
+                  <a href="mailto:info@technopark.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">info@technopark.ru</a>
+                  <p className="text-sm text-gray-400">Пн-Пт: 9:00 - 18:00</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-6 text-white text-lg">Разделы</h4>
+                <ul className="space-y-3">
+                  <li><Link href="/category/collaborative-robots" className="text-gray-400 hover:text-blue-400 transition-colors">Робототехника</Link></li>
+                  <li><Link href="/category/industries" className="text-gray-400 hover:text-blue-400 transition-colors">Отраслевые решения</Link></li>
+                  <li><Link href="/category/automation" className="text-gray-400 hover:text-blue-400 transition-colors">Автоматизация</Link></li>
+                  <li><Link href="/category/support" className="text-gray-400 hover:text-blue-400 transition-colors">Поддержка</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-6 text-white text-lg">Компания</h4>
+                <ul className="space-y-3">
+                  <li><Link href="/category/about" className="text-gray-400 hover:text-blue-400 transition-colors">О Технопарке</Link></li>
+                  <li><Link href="/category/events" className="text-gray-400 hover:text-blue-400 transition-colors">Мероприятия</Link></li>
+                  <li><Link href="/category/careers" className="text-gray-400 hover:text-blue-400 transition-colors">Карьера</Link></li>
+                  <li><button className="text-gray-400 hover:text-blue-400 transition-colors">Обратная связь</button></li>
+                </ul>
+              </div>
+            </div>
+            <div className="border-t border-gray-800 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="text-gray-500 text-sm text-center md:text-left"><p>&copy; 2024 Технопарк ГУАП. Все права защищены.</p></div>
+                <div className="flex flex-wrap justify-center gap-6 text-sm">
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Политика конфиденциальности</Link>
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Пользовательское соглашение</Link>
+                  <Link href="#" className="text-gray-500 hover:text-gray-300 transition-colors">Карта сайта</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </main>
     </>
   );

@@ -41,7 +41,7 @@ export default function Header({ onContactClick }: HeaderProps) {
             {/* Картинка логотипа */}
             <img
               src="/images/logo.png"
-              alt="Технопарк ГУАП"
+              alt="1"
               className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
             />
 

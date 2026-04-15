@@ -27,9 +27,14 @@ export default function Home() {
           </div>
           <div className="container relative z-10 py-24 lg:py-32">
             <div className="max-w-5xl">
-              <h1 className="mb-8 text-white leading-tight text-3xl md:text-4xl lg:text-5xl font-bold">
-                Максимального результата возможно добиться только в тесном взаимодействии университета с партнерами. Это позволяет компаниям укреплять имидж в университетской среде, а университету готовить востребованных экономикой специалистов по таким направлениям, как реверсивный инжиниринг и управление, информационные технологии, инженерные, коллоборативная робототехника и математика.
+              {/* ЗАГОЛОВОК */}
+              <h1 className="mb-4 text-white text-5xl md:text-6xl lg:text-7xl font-bold">
+                Портал партнеров Технопарка
               </h1>
+              {/* ОПИСАНИЕ */}
+              <p className="mb-8 text-xl text-gray-300 max-w-4xl leading-relaxed">
+                Максимального результата возможно добиться только в тесном взаимодействии университета с партнерами. Это позволяет компаниям укреплять имидж в университетской среде, а университету готовить востребованных экономикой специалистов по таким направлениям, как реверсивный инжиниринг и управление, информационные технологии, инженерные, коллоборативная робототехника и математика.
+              </p>
               <div className="flex flex-wrap gap-4 mt-10">
                 <Link href="/category/equipment" className={blueBtnClass}>Смотреть решения</Link>
                 <button onClick={() => setIsModalOpen(true)} className="border-2 border-white text-white hover:bg-white/10 font-medium rounded-sm px-8 py-3 transition-all duration-200 inline-block">
@@ -142,10 +147,10 @@ export default function Home() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { name: 'VIKING LAB', desc: 'лабораторная мебель и оборудование' },
-                { name: 'СРК-1000', desc: 'система рентгеновского контроля' },
-                { name: 'СМ16 ПРО', desc: 'Система струйной отмывки' },
-                { name: 'INSTRUMENTS', desc: 'контрольно-измерительные приборы' },
+                { name: 'Аддитивная установка', desc: 'Печать в космосе' },
+                { name: 'Система технического зрения', desc: '3D234HG' },
+                { name: 'Модульный образовательный робот', desc: 'BFF4CE10D53' },
+                { name: 'Роботизированная ячейка', desc: 'Для контроля' },
               ].map((product) => (
                 <Link key={product.name} href="/category/equipment" className="bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow-xl transition-all cursor-pointer group">
                   <div className="h-64 bg-gray-200 overflow-hidden"><img src="/images/bg.jpg" alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /></div>

@@ -214,7 +214,7 @@ export default function Home() {
                 <p className="text-gray-400 text-sm mb-6">Инновационная площадка для развития технологий</p>
                 <div className="space-y-3">
                   <a href="tel:89811703215" className="block text-lg font-medium text-white hover:text-blue-400 transition-colors">8 (981) 170-32-15</a>
-                  <a href="mailto:info@technopark.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">info@technopark.ru</a>
+                  <a href="mailto:info@technopark.ru" className="block text-sm text-gray-400 hover:text-white transition-colors">pto_isch@guap.ru</a>
                   <p className="text-sm text-gray-400">Пн-Пт: 9:00 - 18:00</p>
                 </div>
               </div>
